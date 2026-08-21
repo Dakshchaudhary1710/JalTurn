@@ -40,7 +40,7 @@ export function SMSMockModal({
   return (
     <div className="modal-overlay">
       <div className="glass-panel max-w-lg w-full p-6 relative border border-sky-500/40 shadow-2xl shadow-slate-950">
-        
+
         {/* Close Button */}
         <button
           onClick={() => {
@@ -59,7 +59,6 @@ export function SMSMockModal({
           </div>
           <div>
             <h2 className="text-lg font-bold text-white">Rural Multi-Channel Alert Simulator</h2>
-            <p className="text-xs text-slate-400">Phase 10 — Feature Phone SMS, WhatsApp & IVR Outreach</p>
           </div>
         </div>
 
@@ -67,9 +66,8 @@ export function SMSMockModal({
         <div className="flex rounded-xl bg-slate-900 p-1 mb-5 border border-slate-800 text-xs font-semibold">
           <button
             onClick={() => setActiveChannel("SMS")}
-            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${
-              activeChannel === "SMS" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
-            }`}
+            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${activeChannel === "SMS" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
+              }`}
           >
             <Smartphone className="w-4 h-4" />
             <span>Feature Phone SMS</span>
@@ -77,9 +75,8 @@ export function SMSMockModal({
 
           <button
             onClick={() => setActiveChannel("WHATSAPP")}
-            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${
-              activeChannel === "WHATSAPP" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
-            }`}
+            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${activeChannel === "WHATSAPP" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
+              }`}
           >
             <MessageSquare className="w-4 h-4" />
             <span>WhatsApp</span>
@@ -87,9 +84,8 @@ export function SMSMockModal({
 
           <button
             onClick={() => setActiveChannel("IVR")}
-            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${
-              activeChannel === "IVR" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
-            }`}
+            className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${activeChannel === "IVR" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
+              }`}
           >
             <PhoneCall className="w-4 h-4" />
             <span>IVR Voice Call</span>
@@ -98,7 +94,7 @@ export function SMSMockModal({
 
         {/* Simulated Mobile Mock Display */}
         <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-inner font-sans">
-          
+
           {activeChannel === "SMS" && (
             <div className="space-y-3">
               <div className="text-[11px] text-slate-500 font-mono flex justify-between">

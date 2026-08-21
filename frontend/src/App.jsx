@@ -11,6 +11,7 @@ import { FairnessDashboard } from "./components/FairnessDashboard.jsx";
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
 import { SMSMockModal } from "./components/SMSMockModal.jsx";
 import { DisputeModal } from "./components/DisputeModal.jsx";
+import { AddBorewellModal } from "./components/AddBorewellModal.jsx";
 import { api } from "./services/api.js";
 import { Droplets, Sparkles, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -46,6 +47,7 @@ export function App() {
   const [disputeTargetTurn, setDisputeTargetTurn] = useState(null);
   const [isSMSOpen, setIsSMSOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isAddBorewellOpen, setIsAddBorewellOpen] = useState(false);
 
   // Toast Alerts
   const [toastMessage, setToastMessage] = useState(null);
@@ -73,20 +75,21 @@ export function App() {
     }
   ]);
 
+  const loadGroups = useCallback(async () => {
+    try {
+      const res = await api.getWaterGroups();
+      if (res.success && res.waterGroups) {
+        setWaterGroups(res.waterGroups);
+      }
+    } catch (err) {
+      console.warn("Using fallback water groups:", err);
+    }
+  }, []);
+
   // Load Groups
   useEffect(() => {
-    async function loadGroups() {
-      try {
-        const res = await api.getWaterGroups();
-        if (res.success && res.waterGroups) {
-          setWaterGroups(res.waterGroups);
-        }
-      } catch (err) {
-        console.warn("Using fallback water groups:", err);
-      }
-    }
     loadGroups();
-  }, []);
+  }, [loadGroups]);
 
   // Fetch Authoritative Queue Data
   const loadQueueData = useCallback(async (showIndicator = false) => {
@@ -123,6 +126,19 @@ export function App() {
   }, [loadQueueData]);
 
   // Actions
+  const handleAddBorewell = async (formData) => {
+    try {
+      const res = await api.addWaterGroup(formData);
+      if (res.success) {
+        showToast(`Water source "${formData.name}" added successfully!`);
+        await loadGroups();
+        setSelectedGroupId(res.waterGroup.id);
+      }
+    } catch (err) {
+      showToast("Error adding water source: " + err.message, "error");
+    }
+  };
+
   const handleRecalculate = async (customWeights) => {
     try {
       setIsRefreshing(true);
@@ -239,6 +255,7 @@ export function App() {
         notificationsCount={notifications.length}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenSMSMock={() => setIsSMSOpen(true)}
+        onOpenAddBorewell={() => setIsAddBorewellOpen(true)}
       />
 
       {/* Main Container */}
@@ -326,6 +343,12 @@ export function App() {
       />
 
       {/* 2. Rural Multi-Channel Outreach Simulator (SMS, WhatsApp, IVR Voice Call) */}
+      <AddBorewellModal
+        isOpen={isAddBorewellOpen}
+        onClose={() => setIsAddBorewellOpen(false)}
+        onSubmit={handleAddBorewell}
+      />
+
       <SMSMockModal
         isOpen={isSMSOpen}
         onClose={() => setIsSMSOpen(false)}

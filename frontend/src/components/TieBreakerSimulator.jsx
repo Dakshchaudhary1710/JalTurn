@@ -6,8 +6,12 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import { api } from "../services/api.js";
 
 export function TieBreakerSimulator() {
+  const [farmersList, setFarmersList] = useState([]);
+  
+  // Configurable Farmer A & Farmer B states
   // Configurable Farmer A & Farmer B states
   const [farmerA, setFarmerA] = useState({
     name: "Farmer A (Ravi)",
@@ -34,6 +38,36 @@ export function TieBreakerSimulator() {
   const [activeTab, setActiveTab] = useState("lottery");
   const [resolutionResult, setResolutionResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
+
+  React.useEffect(() => {
+    async function loadFarmers() {
+      try {
+        const res = await api.getFarmers();
+        if (res.success) setFarmersList(res.farmers);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadFarmers();
+  }, []);
+
+  const handleFarmerChange = (type, farmerId) => {
+    const f = farmersList.find(f => f.id === farmerId);
+    if (!f) return;
+    const targetSet = type === "A" ? setFarmerA : setFarmerB;
+    targetSet({
+      name: f.name,
+      crop: f.cropName || f.crop,
+      stageName: f.stageName || "Initial",
+      stageCriticality: f.stageCriticality || 50,
+      waitDays: f.daysSinceLastWater || 0,
+      landArea: f.landArea || 1.0,
+      evidenceVerified: f.evidenceVerified || false,
+      urgencyScore: f.urgencyScore || 50,
+    });
+    setActiveTab("custom");
+    setResolutionResult(null);
+  };
 
   // --------------------------------------------------
   // PRESET CONFIGURATIONS
@@ -435,11 +469,39 @@ export function TieBreakerSimulator() {
 
         </div>
 
+        {/* Custom Selector */}
+        <div className="mt-4 flex gap-4 border-t border-slate-800/80 pt-4">
+          <div className="flex-1">
+            <label className="block text-xs font-semibold text-slate-400 mb-1">Select Farmer A</label>
+            <select
+              onChange={(e) => handleFarmerChange("A", e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700 text-xs text-white rounded px-2 py-1 focus:border-emerald-500"
+            >
+              <option value="">-- Choose from real farmers --</option>
+              {farmersList.map(f => (
+                <option key={f.id} value={f.id}>{f.name} ({f.cropName})</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-semibold text-slate-400 mb-1">Select Farmer B</label>
+            <select
+              onChange={(e) => handleFarmerChange("B", e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700 text-xs text-white rounded px-2 py-1 focus:border-emerald-500"
+            >
+              <option value="">-- Choose from real farmers --</option>
+              {farmersList.map(f => (
+                <option key={f.id} value={f.id}>{f.name} ({f.cropName})</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Preset Selector */}
         <div className="mt-6 flex flex-wrap gap-2 border-t border-slate-800/80 pt-4">
 
           <span className="text-xs font-semibold text-slate-400 py-1.5 mr-2 flex items-center">
-            Test Scenarios:
+            Test Scenarios (Mock Data):
           </span>
 
           {/* Tier 4 */}

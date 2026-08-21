@@ -10,7 +10,8 @@ export function Navbar({
   activeStatus = "ACTIVE",
   notificationsCount = 2,
   onOpenNotifications,
-  onOpenSMSMock
+  onOpenSMSMock,
+  onOpenAddBorewell
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
@@ -118,6 +119,15 @@ export function Navbar({
                 ▼
               </div>
             </div>
+
+            {/* Add Borewell Button */}
+            <button
+              onClick={onOpenAddBorewell}
+              title="Add New Village Borewell"
+              className="p-2 rounded-lg bg-emerald-900/40 text-emerald-400 hover:bg-emerald-800/60 hover:text-emerald-300 border border-emerald-800/50 transition-colors flex items-center"
+            >
+              <UserPlus className="w-4 h-4" /> {/* Or just use a generic icon */}
+            </button>
 
             {/* Source Status Pill */}
             <div className="hidden lg:flex items-center space-x-2 px-2.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs">

@@ -10,7 +10,7 @@ import { FairnessDashboard } from "./components/FairnessDashboard.jsx";
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
 import { SMSMockModal } from "./components/SMSMockModal.jsx";
 import { DisputeModal } from "./components/DisputeModal.jsx";
-import { PitchDeck } from "./components/PitchDeck.jsx";
+
 import { api } from "./services/api.js";
 import { Droplets, Sparkles, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -306,9 +306,7 @@ export function App() {
         )}
 
         {/* TAB 6: Pitch Presentation Deck (13 Slides) */}
-        {activeTab === "pitch" && (
-          <PitchDeck />
-        )}
+      
 
       </main>
 

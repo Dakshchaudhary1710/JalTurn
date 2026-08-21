@@ -29,9 +29,7 @@ export function Navbar({
                   FAO-56 Calibrated
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
-                Right field. Right time. Fair turn.
-              </p>
+             
             </div>
           </div>
 
@@ -100,17 +98,7 @@ export function Navbar({
               <span>Fairness</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab("pitch")}
-              className={`px-3.5 py-2 rounded-lg text-sm font-bold transition-all flex items-center space-x-1.5 ${
-                activeTab === "pitch"
-                  ? "bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-md shadow-sky-950/50"
-                  : "bg-slate-900 text-emerald-400 hover:bg-slate-800 border border-emerald-800/40"
-              }`}
-            >
-              <Presentation className="w-4 h-4" />
-              <span>PPT Deck (13s)</span>
-            </button>
+           
           </nav>
 
           {/* Right Section: Water Group Selector + Notifications + SMS Mock */}

@@ -1,3 +1,7 @@
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
+
 import React, { useState, useEffect } from "react";
 import { UserPlus, Sprout, Calendar, Phone, MapPin, Scale, CheckCircle2, ShieldCheck, Sparkles, Droplets, Info } from "lucide-react";
 import { CROPS } from "../utils/cropDatabase.js";
@@ -86,22 +90,113 @@ export function FarmerRegistration({
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
+  e.preventDefault();
 
-    setIsSubmitting(true);
-    try {
-      await onRegisterFarmer(formData);
-      setSuccessToast(true);
-      setTimeout(() => {
-        setSuccessToast(false);
-      }, 3000);
-    } catch (err) {
-      console.error("Registration error:", err);
-    } finally {
-      setIsSubmitting(false);
+  if (!formData.name.trim()) return;
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/farmers`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          landArea: Number(formData.landArea),
+          daysSinceLastWater: Number(
+            formData.daysSinceLastWater
+          ),
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Registration failed"
+      );
     }
-  };
+
+    console.log(
+      "Backend registration:",
+      data
+    );
+
+    /*
+      Backend is authoritative.
+      Replace the local preview with
+      the score calculated by server.js.
+    */
+
+    if (data.urgency) {
+      setPreview((prev) => ({
+        ...prev,
+
+        cropName:
+          data.urgency.cropName,
+
+        daysSinceSowing:
+          data.urgency.daysSinceSowing,
+
+        stageName:
+          data.urgency.stageName,
+
+        stageCriticality:
+          data.urgency.stageCriticality,
+
+        kc: data.urgency.kc,
+
+        waitingScore:
+          data.urgency.waitingScore,
+
+        smallholderScore:
+          data.urgency.smallholderScore,
+
+        urgencyScore:
+          data.urgency.urgencyScore,
+
+        description:
+          data.urgency.description,
+      }));
+    }
+
+    /*
+      If parent component needs the
+      newly-created farmer, pass it upward.
+    */
+
+    if (onRegisterFarmer) {
+      await onRegisterFarmer(
+        data.farmer
+      );
+    }
+
+    setSuccessToast(true);
+
+    setTimeout(() => {
+      setSuccessToast(false);
+    }, 3000);
+
+  } catch (err) {
+    console.error(
+      "Registration error:",
+      err
+    );
+
+    alert(
+      err.message ||
+        "Unable to register farmer."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">

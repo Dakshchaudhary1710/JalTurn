@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Navbar } from "./components/Navbar.jsx";
+import { LandingPage } from "./components/LandingPage.jsx";
 import { ActiveTurnBanner } from "./components/ActiveTurnBanner.jsx";
 import { PriorityQueue } from "./components/PriorityQueue.jsx";
 import { FarmerRegistration } from "./components/FarmerRegistration.jsx";
@@ -10,13 +11,12 @@ import { FairnessDashboard } from "./components/FairnessDashboard.jsx";
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
 import { SMSMockModal } from "./components/SMSMockModal.jsx";
 import { DisputeModal } from "./components/DisputeModal.jsx";
-
 import { api } from "./services/api.js";
 import { Droplets, Sparkles, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 
 export function App() {
   // Navigation
-  const [activeTab, setActiveTab] = useState("dashboard"); // 'dashboard' | 'register' | 'tie-demo' | 'history' | 'fairness' | 'pitch'
+  const [activeTab, setActiveTab] = useState("landing"); // 'landing' | 'dashboard' | 'register' | 'tie-demo' | 'history' | 'fairness'
 
   // Water Groups & Selection
   const [waterGroups, setWaterGroups] = useState([
@@ -244,6 +244,16 @@ export function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         
+        {/* TAB 0: Landing Page (Overview & Pitch Entry) */}
+        {activeTab === "landing" && (
+          <LandingPage
+            onLaunchDashboard={() => setActiveTab("dashboard")}
+            onOpenTieDemo={() => setActiveTab("tie-demo")}
+            onOpenRegister={() => setActiveTab("register")}
+            onOpenPitch={() => setActiveTab("pitch")}
+          />
+        )}
+
         {/* TAB 1: Water Group Dashboard (Hero Screen) */}
         {activeTab === "dashboard" && (
           <div className="space-y-6">
@@ -304,10 +314,6 @@ export function App() {
             waterGroup={selectedGroup}
           />
         )}
-
-        {/* TAB 6: Pitch Presentation Deck (13 Slides) */}
-      
-
       </main>
 
       {/* MODALS */}

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Scale, Sparkles, Trophy, CheckCircle, ArrowDown, HelpCircle, Shuffle, ShieldCheck, RefreshCw } from "lucide-react";
+import {
+  Scale,
+  Trophy,
+  Shuffle,
+  ShieldCheck,
+} from "lucide-react";
 import confetti from "canvas-confetti";
 
 export function TieBreakerSimulator() {
@@ -12,7 +17,7 @@ export function TieBreakerSimulator() {
     waitDays: 5,
     landArea: 1.0,
     evidenceVerified: false,
-    urgencyScore: 87.5
+    urgencyScore: 87.5,
   });
 
   const [farmerB, setFarmerB] = useState({
@@ -23,16 +28,21 @@ export function TieBreakerSimulator() {
     waitDays: 5,
     landArea: 1.0,
     evidenceVerified: false,
-    urgencyScore: 87.5
+    urgencyScore: 87.5,
   });
 
-  const [activeTab, setActiveTab] = useState("lottery"); // presets: 'lottery', 'waiting', 'land', 'evidence'
+  const [activeTab, setActiveTab] = useState("lottery");
   const [resolutionResult, setResolutionResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  // Preset Configurations
+  // --------------------------------------------------
+  // PRESET CONFIGURATIONS
+  // --------------------------------------------------
+
   const applyPreset = (type) => {
     setActiveTab(type);
+    setResolutionResult(null);
+
     if (type === "lottery") {
       // Tier 4: Exact Tie
       setFarmerA({
@@ -43,8 +53,9 @@ export function TieBreakerSimulator() {
         waitDays: 5,
         landArea: 1.0,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
+
       setFarmerB({
         name: "Farmer B (Vikram)",
         crop: "Wheat (गेहूं)",
@@ -53,20 +64,21 @@ export function TieBreakerSimulator() {
         waitDays: 5,
         landArea: 1.0,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
     } else if (type === "waiting") {
-      // Tier 1: Wait difference
+      // Tier 1: Waiting time difference
       setFarmerA({
         name: "Farmer A (Ravi)",
         crop: "Wheat (गेहूं)",
         stageName: "Mid-Season (Flowering)",
         stageCriticality: 92,
-        waitDays: 7, // Longer waiting
+        waitDays: 7,
         landArea: 1.0,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
+
       setFarmerB({
         name: "Farmer B (Vikram)",
         crop: "Wheat (गेहूं)",
@@ -75,20 +87,21 @@ export function TieBreakerSimulator() {
         waitDays: 4,
         landArea: 1.0,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
     } else if (type === "land") {
-      // Tier 2: Smallholder
+      // Tier 2: Smallholder equity
       setFarmerA({
         name: "Farmer A (Ravi)",
         crop: "Wheat (गेहूं)",
         stageName: "Mid-Season (Flowering)",
         stageCriticality: 92,
         waitDays: 5,
-        landArea: 0.8, // Smaller land
+        landArea: 0.8,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
+
       setFarmerB({
         name: "Farmer B (Vikram)",
         crop: "Wheat (गेहूं)",
@@ -97,10 +110,10 @@ export function TieBreakerSimulator() {
         waitDays: 5,
         landArea: 2.5,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
     } else if (type === "evidence") {
-      // Tier 3: Verified Evidence
+      // Tier 3: Verified evidence
       setFarmerA({
         name: "Farmer A (Ravi)",
         crop: "Wheat (गेहूं)",
@@ -108,9 +121,10 @@ export function TieBreakerSimulator() {
         stageCriticality: 92,
         waitDays: 5,
         landArea: 1.0,
-        evidenceVerified: true, // Evidence attached
-        urgencyScore: 87.5
+        evidenceVerified: true,
+        urgencyScore: 87.5,
       });
+
       setFarmerB({
         name: "Farmer B (Vikram)",
         crop: "Wheat (गेहूं)",
@@ -119,119 +133,227 @@ export function TieBreakerSimulator() {
         waitDays: 5,
         landArea: 1.0,
         evidenceVerified: false,
-        urgencyScore: 87.5
+        urgencyScore: 87.5,
       });
     }
-    setResolutionResult(null);
   };
 
-  // Run Tie Resolution Simulation
+  // --------------------------------------------------
+  // TIE-BREAKER ENGINE
+  // --------------------------------------------------
+
   const runTieSimulation = () => {
     setIsSimulating(true);
     setResolutionResult(null);
 
     setTimeout(() => {
-      // Execute 4-Tier Logic
       const steps = [];
+
       let winner = null;
       let loser = null;
       let tier = "";
       let reason = "";
 
+      // ----------------------------------------------
+      // BASELINE
+      // ----------------------------------------------
+
       steps.push({
         step: 1,
-        rule: "Baseline Urgency Score Check",
-        detail: `Both farmers have equal urgency score: ${farmerA.urgencyScore} vs ${farmerB.urgencyScore}.`,
-        status: "TIE"
+        rule: "Baseline Urgency Score",
+        detail: `Farmer A: ${farmerA.urgencyScore} vs Farmer B: ${farmerB.urgencyScore}.`,
+        status:
+          farmerA.urgencyScore === farmerB.urgencyScore
+            ? "TIE"
+            : "RESOLVED",
       });
 
-      // TIER 1: Waiting time
-      if (farmerA.waitDays !== farmerB.waitDays) {
-        winner = farmerA.waitDays > farmerB.waitDays ? farmerA : farmerB;
-        loser = farmerA.waitDays > farmerB.waitDays ? farmerB : farmerA;
-        tier = "Tier 1: Waiting Time Priority";
-        reason = `${winner.name} has waited longer without water (${Math.max(farmerA.waitDays, farmerB.waitDays)} days vs ${Math.min(farmerA.waitDays, farmerB.waitDays)} days).`;
+      // ----------------------------------------------
+      // TIER 1 — WAITING TIME
+      // ----------------------------------------------
+
+      if (farmerA.urgencyScore !== farmerB.urgencyScore) {
+        winner =
+          farmerA.urgencyScore > farmerB.urgencyScore
+            ? farmerA
+            : farmerB;
+
+        loser =
+          farmerA.urgencyScore > farmerB.urgencyScore
+            ? farmerB
+            : farmerA;
+
+        tier = "Baseline Urgency";
+        reason = `${winner.name} has the higher irrigation urgency score.`;
+
         steps.push({
           step: 2,
-          rule: "Tier 1: Waiting Time Priority",
+          rule: "Baseline Urgency Resolution",
           detail: reason,
           status: "RESOLVED",
-          winner: winner.name
+          winner: winner.name,
         });
       } else {
         steps.push({
           step: 2,
           rule: "Tier 1: Waiting Time Priority",
-          detail: `Identical waiting period (${farmerA.waitDays} days). Moving to Tier 2.`,
-          status: "TIE"
+          detail:
+            farmerA.waitDays !== farmerB.waitDays
+              ? "Waiting periods differ. Longer waiting time receives priority."
+              : `Identical waiting period (${farmerA.waitDays} days). Moving to Tier 2.`,
+          status:
+            farmerA.waitDays !== farmerB.waitDays
+              ? "RESOLVED"
+              : "TIE",
         });
 
-        // TIER 2: Landholding Size
-        if (Math.abs(farmerA.landArea - farmerB.landArea) > 0.05) {
-          winner = farmerA.landArea < farmerB.landArea ? farmerA : farmerB;
-          loser = farmerA.landArea < farmerB.landArea ? farmerB : farmerA;
-          tier = "Tier 2: Smallholder Equity";
-          reason = `${winner.name} holds a smaller plot (${Math.min(farmerA.landArea, farmerB.landArea)} acres vs ${Math.max(farmerA.landArea, farmerB.landArea)} acres) to protect smallholder resilience.`;
-          steps.push({
-            step: 3,
-            rule: "Tier 2: Smallholder Equity",
+        if (farmerA.waitDays !== farmerB.waitDays) {
+          winner =
+            farmerA.waitDays > farmerB.waitDays
+              ? farmerA
+              : farmerB;
+
+          loser =
+            farmerA.waitDays > farmerB.waitDays
+              ? farmerB
+              : farmerA;
+
+          tier = "Tier 1: Waiting Time Priority";
+
+          reason = `${winner.name} has waited longer without irrigation (${winner.waitDays} days).`;
+
+          steps[1] = {
+            step: 2,
+            rule: "Tier 1: Waiting Time Priority",
             detail: reason,
             status: "RESOLVED",
-            winner: winner.name
-          });
+            winner: winner.name,
+          };
         } else {
-          steps.push({
-            step: 3,
-            rule: "Tier 2: Smallholder Equity",
-            detail: `Identical landholding size (${farmerA.landArea} acres). Moving to Tier 3.`,
-            status: "TIE"
-          });
+          // ------------------------------------------
+          // TIER 2 — SMALLHOLDER EQUITY
+          // ------------------------------------------
 
-          // TIER 3: Verified Agronomic Evidence
-          if (farmerA.evidenceVerified !== farmerB.evidenceVerified) {
-            winner = farmerA.evidenceVerified ? farmerA : farmerB;
-            loser = farmerA.evidenceVerified ? farmerB : farmerA;
-            tier = "Tier 3: Verified Field Evidence";
-            reason = `${winner.name} submitted geotagged soil-moisture / crop-stage verification evidence.`;
+          if (
+            Math.abs(farmerA.landArea - farmerB.landArea) > 0.05
+          ) {
+            winner =
+              farmerA.landArea < farmerB.landArea
+                ? farmerA
+                : farmerB;
+
+            loser =
+              farmerA.landArea < farmerB.landArea
+                ? farmerB
+                : farmerA;
+
+            tier = "Tier 2: Smallholder Equity";
+
+            reason = `${winner.name} has the smaller landholding (${winner.landArea} acres vs ${loser.landArea} acres).`;
+
             steps.push({
-              step: 4,
-              rule: "Tier 3: Verified Field Evidence",
+              step: 3,
+              rule: "Tier 2: Smallholder Equity",
               detail: reason,
               status: "RESOLVED",
-              winner: winner.name
+              winner: winner.name,
             });
           } else {
             steps.push({
-              step: 4,
-              rule: "Tier 3: Verified Field Evidence",
-              detail: `Evidence status equal (${farmerA.evidenceVerified ? "Both Verified" : "Neither Verified"}). Moving to Tier 4.`,
-              status: "TIE"
+              step: 3,
+              rule: "Tier 2: Smallholder Equity",
+              detail: `Identical landholding size (${farmerA.landArea} acres). Moving to Tier 3.`,
+              status: "TIE",
             });
 
-            // TIER 4: Public Verifiable Lottery
-            winner = farmerB; // Winner of random draw
-            loser = farmerA;
-            tier = "Tier 4: Public Algorithmic Lottery";
-            reason = "Random tie-break after all deterministic criteria were exhausted (Seed: JAL_LOTTERY_2026_08_22).";
-            steps.push({
-              step: 5,
-              rule: "Tier 4: Public Algorithmic Lottery",
-              detail: `Cryptographic pseudo-random seed selected ${winner.name}. Publicly verifiable and logged.`,
-              status: "RESOLVED",
-              winner: winner.name
-            });
+            // ----------------------------------------
+            // TIER 3 — VERIFIED EVIDENCE
+            // ----------------------------------------
 
-            // Trigger celebratory confetti for lottery
-            try {
-              confetti({
-                particleCount: 80,
-                spread: 70,
-                origin: { y: 0.6 }
+            if (
+              farmerA.evidenceVerified !==
+              farmerB.evidenceVerified
+            ) {
+              winner = farmerA.evidenceVerified
+                ? farmerA
+                : farmerB;
+
+              loser = farmerA.evidenceVerified
+                ? farmerB
+                : farmerA;
+
+              tier = "Tier 3: Verified Field Evidence";
+
+              reason = `${winner.name} submitted verified agronomic field evidence.`;
+
+              steps.push({
+                step: 4,
+                rule: "Tier 3: Verified Field Evidence",
+                detail: reason,
+                status: "RESOLVED",
+                winner: winner.name,
               });
-            } catch (e) {}
+            } else {
+              steps.push({
+                step: 4,
+                rule: "Tier 3: Verified Field Evidence",
+                detail: `Evidence status equal (${
+                  farmerA.evidenceVerified
+                    ? "Both Verified"
+                    : "Neither Verified"
+                }). Moving to Tier 4.`,
+                status: "TIE",
+              });
+
+              // ----------------------------------------
+              // TIER 4 — PUBLIC RANDOMIZED DRAW
+              // ----------------------------------------
+
+              const randomValue = Math.random();
+
+              if (randomValue < 0.5) {
+                winner = farmerA;
+                loser = farmerB;
+              } else {
+                winner = farmerB;
+                loser = farmerA;
+              }
+
+              tier = "Tier 4: Public Randomized Draw";
+
+              const drawId =
+                `JAL-${Date.now()}-${Math.floor(
+                  Math.random() * 100000
+                )}`;
+
+              reason = `All deterministic criteria were equal. A randomized draw selected ${winner.name}.`;
+
+              steps.push({
+                step: 5,
+                rule: "Tier 4: Public Randomized Draw",
+                detail: `${winner.name} selected by randomized draw. Draw Reference: ${drawId}.`,
+                status: "RESOLVED",
+                winner: winner.name,
+              });
+
+              // Confetti for final randomized resolution
+              try {
+                confetti({
+                  particleCount: 80,
+                  spread: 70,
+                  origin: { y: 0.6 },
+                });
+              } catch (error) {
+                // Ignore confetti errors
+              }
+            }
           }
         }
       }
+
+      // ----------------------------------------------
+      // FINAL RESULT
+      // ----------------------------------------------
 
       setResolutionResult({
         winner,
@@ -239,49 +361,88 @@ export function TieBreakerSimulator() {
         tier,
         reason,
         steps,
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(),
       });
+
       setIsSimulating(false);
     }, 600);
   };
 
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
+
   return (
     <div className="space-y-6">
-      
+
       {/* Hero Header */}
       <div className="glass-panel p-6 sm:p-8 border border-amber-500/30 relative overflow-hidden">
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
           <div>
+
+            {/* Feature Badge */}
             <div className="flex items-center space-x-2">
+
               <span className="px-3 py-1 text-xs font-extrabold uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-600/50 rounded-full flex items-center gap-1.5">
+
                 <Scale className="w-3.5 h-3.5" />
-                Hackathon Judge Challenge Demo
+
+                Fairness Engine
+
               </span>
-              <span className="text-xs text-slate-400 font-mono">Phase 7 Ready</span>
+
+              <span className="text-xs text-slate-400 font-mono">
+                Transparent Decision System
+              </span>
+
             </div>
+
+            {/* Main Heading */}
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">
-              Predefined 4-Tier Tie-Breaker Engine
+              4-Tier Tie-Breaker
             </h1>
+
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
-              "What happens when two farmers claim equally critical crop stages?" — JalTurn eliminates social dispute through an immutable, multi-tier decision chain decided before conflict occurs.
+              When two farmers have equal irrigation priority, JalTurn
+              resolves the conflict through a predefined and transparent
+              four-tier decision process.
             </p>
+
           </div>
 
+          {/* Resolve Button */}
           <button
             onClick={runTieSimulation}
             disabled={isSimulating}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-amber-950/40 transition-all flex items-center justify-center space-x-2 flex-shrink-0"
           >
-            <Shuffle className={`w-4 h-4 ${isSimulating ? "animate-spin" : ""}`} />
-            <span>{isSimulating ? "Resolving Chain..." : "Execute Tie-Break Chain"}</span>
+
+            <Shuffle
+              className={`w-4 h-4 ${
+                isSimulating ? "animate-spin" : ""
+              }`}
+            />
+
+            <span>
+              {isSimulating
+                ? "Resolving..."
+                : "Run Fairness Check"}
+            </span>
+
           </button>
+
         </div>
 
-        {/* Preset Selector Tabs */}
+        {/* Preset Selector */}
         <div className="mt-6 flex flex-wrap gap-2 border-t border-slate-800/80 pt-4">
+
           <span className="text-xs font-semibold text-slate-400 py-1.5 mr-2 flex items-center">
             Test Scenarios:
           </span>
+
+          {/* Tier 4 */}
           <button
             onClick={() => applyPreset("lottery")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -290,8 +451,10 @@ export function TieBreakerSimulator() {
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
-            🎲 Tier 4: Exact Tie → Public Lottery (Demo Hero)
+            🎲 Exact Tie → Randomized Draw
           </button>
+
+          {/* Tier 1 */}
           <button
             onClick={() => applyPreset("waiting")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -300,8 +463,10 @@ export function TieBreakerSimulator() {
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
-            ⏱️ Tier 1: Waiting Time Diff (7d vs 4d)
+            ⏱️ Tier 1: Waiting Time
           </button>
+
+          {/* Tier 2 */}
           <button
             onClick={() => applyPreset("land")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -310,8 +475,10 @@ export function TieBreakerSimulator() {
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
-            🌱 Tier 2: Smallholder Equity (0.8ac vs 2.5ac)
+            🌱 Tier 2: Smallholder Equity
           </button>
+
+          {/* Tier 3 */}
           <button
             onClick={() => applyPreset("evidence")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -320,131 +487,238 @@ export function TieBreakerSimulator() {
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
-            📸 Tier 3: Verified Agronomic Evidence
+            📸 Tier 3: Verified Evidence
           </button>
+
         </div>
       </div>
 
-      {/* Comparison Cards: Farmer A vs Farmer B */}
+      {/* Farmer Comparison */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Farmer A Card */}
+
+        {/* Farmer A */}
         <div className="glass-panel p-5 border border-slate-800 relative">
+
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+
             <span className="text-sm font-bold text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs font-mono">A</span>
+
+              <span className="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs font-mono">
+                A
+              </span>
+
               {farmerA.name}
+
             </span>
+
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-amber-950 text-amber-300 border border-amber-700">
               Urgency: {farmerA.urgencyScore}
             </span>
+
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-4 text-xs">
+
             <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Crop & Stage</span>
-              <strong className="text-white">{farmerA.crop}</strong>
-              <div className="text-emerald-400 text-[11px] font-medium">{farmerA.stageName}</div>
+              <span className="text-slate-400 block text-[10px]">
+                Crop & Stage
+              </span>
+
+              <strong className="text-white">
+                {farmerA.crop}
+              </strong>
+
+              <div className="text-emerald-400 text-[11px] font-medium">
+                {farmerA.stageName}
+              </div>
             </div>
 
             <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Days Waiting</span>
-              <strong className="text-sky-300 text-base font-mono">{farmerA.waitDays} days</strong>
-            </div>
+              <span className="text-slate-400 block text-[10px]">
+                Days Waiting
+              </span>
 
-            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Landholding Size</span>
-              <strong className="text-amber-300 text-base font-mono">{farmerA.landArea} acres</strong>
-            </div>
-
-            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Crop Evidence</span>
-              <strong className={farmerA.evidenceVerified ? "text-emerald-400" : "text-slate-500"}>
-                {farmerA.evidenceVerified ? "✓ Verified Soil Data" : "No Attachment"}
+              <strong className="text-sky-300 text-base font-mono">
+                {farmerA.waitDays} days
               </strong>
             </div>
+
+            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">
+                Landholding Size
+              </span>
+
+              <strong className="text-amber-300 text-base font-mono">
+                {farmerA.landArea} acres
+              </strong>
+            </div>
+
+            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">
+                Crop Evidence
+              </span>
+
+              <strong
+                className={
+                  farmerA.evidenceVerified
+                    ? "text-emerald-400"
+                    : "text-slate-500"
+                }
+              >
+                {farmerA.evidenceVerified
+                  ? "✓ Verified Field Data"
+                  : "No Attachment"}
+              </strong>
+            </div>
+
           </div>
         </div>
 
-        {/* Farmer B Card */}
+        {/* Farmer B */}
         <div className="glass-panel p-5 border border-slate-800 relative">
+
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+
             <span className="text-sm font-bold text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-mono">B</span>
+
+              <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-mono">
+                B
+              </span>
+
               {farmerB.name}
+
             </span>
+
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-amber-950 text-amber-300 border border-amber-700">
               Urgency: {farmerB.urgencyScore}
             </span>
+
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-4 text-xs">
+
             <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Crop & Stage</span>
-              <strong className="text-white">{farmerB.crop}</strong>
-              <div className="text-emerald-400 text-[11px] font-medium">{farmerB.stageName}</div>
+              <span className="text-slate-400 block text-[10px]">
+                Crop & Stage
+              </span>
+
+              <strong className="text-white">
+                {farmerB.crop}
+              </strong>
+
+              <div className="text-emerald-400 text-[11px] font-medium">
+                {farmerB.stageName}
+              </div>
             </div>
 
             <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Days Waiting</span>
-              <strong className="text-sky-300 text-base font-mono">{farmerB.waitDays} days</strong>
-            </div>
+              <span className="text-slate-400 block text-[10px]">
+                Days Waiting
+              </span>
 
-            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Landholding Size</span>
-              <strong className="text-amber-300 text-base font-mono">{farmerB.landArea} acres</strong>
-            </div>
-
-            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-              <span className="text-slate-400 block text-[10px]">Crop Evidence</span>
-              <strong className={farmerB.evidenceVerified ? "text-emerald-400" : "text-slate-500"}>
-                {farmerB.evidenceVerified ? "✓ Verified Soil Data" : "No Attachment"}
+              <strong className="text-sky-300 text-base font-mono">
+                {farmerB.waitDays} days
               </strong>
             </div>
+
+            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">
+                Landholding Size
+              </span>
+
+              <strong className="text-amber-300 text-base font-mono">
+                {farmerB.landArea} acres
+              </strong>
+            </div>
+
+            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              <span className="text-slate-400 block text-[10px]">
+                Crop Evidence
+              </span>
+
+              <strong
+                className={
+                  farmerB.evidenceVerified
+                    ? "text-emerald-400"
+                    : "text-slate-500"
+                }
+              >
+                {farmerB.evidenceVerified
+                  ? "✓ Verified Field Data"
+                  : "No Attachment"}
+              </strong>
+            </div>
+
           </div>
         </div>
-
       </div>
 
-      {/* Execution Results View */}
+      {/* Resolution Result */}
       {resolutionResult ? (
+
         <div className="glass-panel-glow p-6 sm:p-8 border border-emerald-500/40 space-y-6">
-          
+
           {/* Winner Announcement */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-teal-950/60 to-slate-950 border border-emerald-500/40">
+
             <div className="flex items-center space-x-4">
+
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 to-emerald-400 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-950/50">
+
                 <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-amber-400">
+
                   <Trophy className="w-7 h-7" />
+
                 </div>
+
               </div>
+
               <div>
+
                 <span className="text-[11px] font-bold tracking-wider uppercase text-emerald-400 font-mono">
                   ⚖ TIE RESOLVED • {resolutionResult.tier}
                 </span>
+
                 <h2 className="text-2xl font-extrabold text-white mt-0.5">
                   Winner: {resolutionResult.winner.name}
                 </h2>
+
                 <p className="text-xs text-slate-300 mt-1">
-                  Reason: <strong className="text-emerald-300 font-medium">"{resolutionResult.reason}"</strong>
+                  Reason:{" "}
+                  <strong className="text-emerald-300 font-medium">
+                    "{resolutionResult.reason}"
+                  </strong>
                 </p>
+
               </div>
+
             </div>
 
             <div className="text-right font-mono text-xs text-slate-400">
-              <span>Timestamp: {resolutionResult.timestamp}</span>
-              <div className="text-[10px] text-emerald-400">Status: Signed & Logged</div>
+
+              <span>
+                Timestamp: {resolutionResult.timestamp}
+              </span>
+
+              <div className="text-[10px] text-emerald-400">
+                Decision Recorded
+              </div>
+
             </div>
+
           </div>
 
-          {/* Step-by-Step Decision Ladder */}
+          {/* Decision Ladder */}
           <div className="space-y-3">
+
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Audit Trail Execution Tree
+              Decision Audit Trail
             </h3>
 
             <div className="space-y-2">
+
               {resolutionResult.steps.map((s, idx) => (
+
                 <div
                   key={idx}
                   className={`p-3 rounded-xl border text-xs flex items-center justify-between ${
@@ -453,14 +727,25 @@ export function TieBreakerSimulator() {
                       : "bg-slate-900/60 border-slate-800 text-slate-400"
                   }`}
                 >
+
                   <div className="flex items-center space-x-3">
+
                     <span className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 font-mono text-xs flex items-center justify-center font-bold">
                       {s.step}
                     </span>
+
                     <div>
-                      <div className="font-semibold text-slate-200">{s.rule}</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">{s.detail}</div>
+
+                      <div className="font-semibold text-slate-200">
+                        {s.rule}
+                      </div>
+
+                      <div className="text-[11px] text-slate-400 mt-0.5">
+                        {s.detail}
+                      </div>
+
                     </div>
+
                   </div>
 
                   <span
@@ -470,28 +755,53 @@ export function TieBreakerSimulator() {
                         : "bg-slate-800 text-slate-400"
                     }`}
                   >
-                    {s.status === "RESOLVED" ? "RESOLVED HERE" : "TIED (EQUAL)"}
+                    {s.status === "RESOLVED"
+                      ? "RESOLVED HERE"
+                      : "TIED"}
                   </span>
+
                 </div>
+
               ))}
+
             </div>
           </div>
 
-          {/* Design Principle Callout */}
+          {/* Design Principle */}
           <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 flex items-start space-x-3">
+
             <ShieldCheck className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
+
             <div>
-              <strong className="text-white block mb-0.5">Core Design Principle:</strong>
-              No administrator or local powerful actor decides the winner manually. The rule is decided before the conflict occurs, and every decision produces an immutable log visible to all farmers in the Water Group.
+
+              <strong className="text-white block mb-0.5">
+                Fairness by Design
+              </strong>
+
+              JalTurn resolves equal-priority claims using predefined
+              rules rather than discretionary manual selection. Each
+              decision can be recorded in the system audit trail for
+              transparency.
+
             </div>
+
           </div>
 
         </div>
+
       ) : (
+
         <div className="p-8 text-center glass-panel border border-slate-800 text-slate-400 space-y-3">
+
           <Scale className="w-10 h-10 text-slate-600 mx-auto" />
-          <p className="text-sm">Click "Execute Tie-Break Chain" to evaluate the 4-tier decision tree.</p>
+
+          <p className="text-sm">
+            Select a scenario and run the fairness check to evaluate
+            the 4-tier decision process.
+          </p>
+
         </div>
+
       )}
 
     </div>

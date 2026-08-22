@@ -125,7 +125,7 @@ export function ActiveTurnBanner({
               style={{ width: `${progressPct}%` }}
             ></div>
           </div>
-          <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
             <span>Started {elapsedMinutes}m ago</span>
             <span>Total: {totalDuration}m</span>
           </div>

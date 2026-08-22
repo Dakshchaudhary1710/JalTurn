@@ -182,7 +182,7 @@ export function FarmerRegistration({
                 />
                 <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3.5" />
               </div>
-              <p className="text-[10px] text-slate-500 mt-0.5">Used for Automated SMS & IVR voice alerts</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Used for Automated SMS & IVR voice alerts</p>
             </div>
 
             {/* Water Group */}
@@ -245,7 +245,7 @@ export function FarmerRegistration({
                 onChange={(e) => handleChange("sowingDate", e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-emerald-500"
               />
-              <p className="text-[10px] text-slate-500 mt-0.5">
+              <p className="text-[10px] text-slate-400 mt-0.5">
                 Automatically derives days since sowing (DAS)
               </p>
             </div>
@@ -264,7 +264,7 @@ export function FarmerRegistration({
                 onChange={(e) => handleChange("landArea", e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-emerald-500"
               />
-              <p className="text-[10px] text-slate-500 mt-0.5">
+              <p className="text-[10px] text-slate-400 mt-0.5">
                 Marginal farmers (&le;1-2 acres) receive equity protection
               </p>
             </div>

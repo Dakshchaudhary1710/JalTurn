@@ -80,7 +80,7 @@ export function ExplainabilityModal({
                 1. FAO-56 Crop Stage Criticality (60% Weight)
               </span>
               <span className="font-mono font-bold text-white text-sm">
-                {farmerData.stageCriticality} <span className="text-slate-500 text-xs">/100</span>
+                {farmerData.stageCriticality} <span className="text-slate-400 text-xs">/100</span>
               </span>
             </div>
             <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
@@ -105,7 +105,7 @@ export function ExplainabilityModal({
                 2. Waiting Time Score (25% Weight)
               </span>
               <span className="font-mono font-bold text-white text-sm">
-                {farmerData.waitingScore} <span className="text-slate-500 text-xs">/100</span>
+                {farmerData.waitingScore} <span className="text-slate-400 text-xs">/100</span>
               </span>
             </div>
             <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
@@ -130,7 +130,7 @@ export function ExplainabilityModal({
                 3. Smallholder Equity Score (15% Weight)
               </span>
               <span className="font-mono font-bold text-white text-sm">
-                {farmerData.smallholderScore} <span className="text-slate-500 text-xs">/100</span>
+                {farmerData.smallholderScore} <span className="text-slate-400 text-xs">/100</span>
               </span>
             </div>
             <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">

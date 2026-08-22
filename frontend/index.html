@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JalTurn — Fair & Explainable Shared Irrigation Queue</title>
     <!-- Google Fonts -->
@@ -22,8 +22,58 @@
             },
             colors: {
               slate: {
-                850: '#151f32',
-                950: '#070d17',
+                950: 'var(--charcoal-900)',
+                900: 'var(--charcoal-700)',
+                850: 'var(--charcoal-500)',
+                800: 'var(--charcoal-400)',
+                700: 'var(--charcoal-300)',
+                600: '#5C5448',
+                500: 'var(--cream-400)',
+                400: 'var(--cream-300)',
+                300: 'var(--cream-200)',
+                200: 'var(--cream-100)',
+                100: 'var(--cream-50)',
+                50: '#ffffff',
+              },
+              emerald: {
+                950: 'rgba(94, 140, 118, 0.15)',
+                900: 'rgba(94, 140, 118, 0.25)',
+                800: 'var(--sage-400)',
+                700: 'var(--sage-400)',
+                600: 'var(--sage-500)',
+                500: 'var(--sage-600)',
+                400: 'var(--sage-700)',
+                300: 'var(--sage-700)',
+              },
+              sky: {
+                950: 'rgba(94, 128, 153, 0.15)',
+                900: 'rgba(94, 128, 153, 0.25)',
+                800: 'var(--steel-400)',
+                700: 'var(--steel-400)',
+                600: 'var(--steel-500)',
+                500: 'var(--steel-500)',
+                400: 'var(--charcoal-700)',
+                300: 'var(--charcoal-900)',
+              },
+              amber: {
+                950: 'rgba(160, 120, 48, 0.12)',
+                900: 'rgba(160, 120, 48, 0.25)',
+                800: 'var(--amber-warm)',
+                700: 'var(--amber-warm)',
+                600: 'var(--amber-warm)',
+                500: 'var(--amber-warm)',
+                400: '#7A5820',
+                300: '#5C4318',
+              },
+              teal: {
+                950: 'rgba(94, 140, 118, 0.15)',
+                600: 'var(--sage-500)',
+                500: 'var(--sage-600)',
+              },
+              rose: {
+                950: 'rgba(176, 64, 64, 0.15)',
+                500: 'var(--red-warm)',
+                400: '#8A3232',
               }
             }
           }
@@ -31,7 +81,7 @@
       }
     </script>
   </head>
-  <body class="bg-[#070d17] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-slate-950">
+  <body class="bg-[#EDE6D8] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-slate-950">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

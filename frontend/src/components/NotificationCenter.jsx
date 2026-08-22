@@ -35,7 +35,7 @@ export function NotificationCenter({
       {/* Notifications List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {notifications.length === 0 ? (
-          <div className="py-12 text-center text-slate-500 text-xs">
+          <div className="py-12 text-center text-slate-400 text-xs">
             No active unread notifications.
           </div>
         ) : (
@@ -64,7 +64,7 @@ export function NotificationCenter({
 
       {/* Footer */}
       <div className="p-4 border-t border-slate-800 flex justify-between items-center text-xs">
-        <span className="text-slate-500">Auto-push to registered SIMs</span>
+        <span className="text-slate-400">Auto-push to registered SIMs</span>
         <button
           onClick={onClear}
           className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800"

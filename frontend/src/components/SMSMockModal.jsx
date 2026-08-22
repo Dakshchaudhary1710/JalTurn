@@ -97,7 +97,7 @@ export function SMSMockModal({
 
           {activeChannel === "SMS" && (
             <div className="space-y-3">
-              <div className="text-[11px] text-slate-500 font-mono flex justify-between">
+              <div className="text-[11px] text-slate-400 font-mono flex justify-between">
                 <span>SENDER: VM-JALTURN</span>
                 <span>TODAY, 10:14 AM</span>
               </div>

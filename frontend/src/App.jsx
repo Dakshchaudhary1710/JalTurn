@@ -232,8 +232,28 @@ export function App() {
   const nextFarmer = queueData.queue && queueData.queue.length > 0 ? queueData.queue[0] : null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+    <div className="min-h-screen bg-transparent text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
       
+      {/* Global Background Video */}
+      <video
+        src="/bg-video.mp4"
+        className="fixed inset-0 w-full h-full object-cover pointer-events-none"
+        style={{ zIndex: -10 }}
+        muted
+        playsInline
+        autoPlay
+        loop
+        disablePictureInPicture
+        controlsList="nodownload nofullscreen noremoteplayback"
+      />
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: -9,
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.40) 25%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.50) 100%)"
+        }}
+      />
+
       {/* Toast Notification Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 animate-bounce">
@@ -386,15 +406,21 @@ export function App() {
       />
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-slate-300">JalTurn</span>
-            <span>•</span>
-            <span>FAO-56 Evapotranspiration Crop-Urgency Shared Irrigation Engine</span>
+      <footer className="mt-auto py-8" style={{background:"rgba(0,0,0,0.50)", backdropFilter:"blur(20px)"}}>
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:"linear-gradient(135deg,#5E8C76,#5E8099)"}}>
+              <span className="text-white text-sm font-black">J</span>
+            </div>
+            <div>
+              <span className="font-extrabold text-white text-sm">JalTurn</span>
+              <p className="text-[11px] mt-0.5" style={{color:"rgba(255,255,255,0.45)"}}>FAO-56 Crop-Urgency Irrigation Engine</p>
+            </div>
           </div>
-          <div className="text-[11px] font-mono text-slate-400">
-            Hackathon MVP • Designed for Water User Associations (WUAs)
+          <div className="flex items-center gap-6 text-[11px]" style={{color:"rgba(255,255,255,0.40)"}}>
+            <span>Built for Water User Associations (WUAs)</span>
+            <span className="hidden sm:block">·</span>
+            <span className="hidden sm:block">Hackathon MVP</span>
           </div>
         </div>
       </footer>

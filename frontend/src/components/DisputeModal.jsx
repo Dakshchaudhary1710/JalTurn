@@ -150,7 +150,7 @@ export function DisputeModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold flex items-center space-x-1.5 shadow-lg shadow-amber-950/40"
+              className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold flex items-center space-x-1.5 shadow-lg shadow-amber-950/40"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isSubmitting ? "Submitting..." : "Log Public Dispute"}</span>

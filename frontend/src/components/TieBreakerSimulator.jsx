@@ -434,11 +434,11 @@ export function TieBreakerSimulator() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">
-              4-Tier Tie-Breaker
+            <h1 className="text-2xl sm:text-3xl font-extrabold mt-2" style={{color:"#ffffff"}}>
+              Tie-Breaker
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-200 mt-1 max-w-3xl leading-relaxed">
               When two farmers have equal irrigation priority, JalTurn
               resolves the conflict through a predefined and transparent
               four-tier decision process.
@@ -450,7 +450,7 @@ export function TieBreakerSimulator() {
           <button
             onClick={runTieSimulation}
             disabled={isSimulating}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-sm shadow-xl shadow-amber-950/40 transition-all flex items-center justify-center space-x-2 flex-shrink-0"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-white font-extrabold text-sm shadow-xl shadow-amber-950/40 transition-all flex items-center justify-center space-x-2 flex-shrink-0"
           >
 
             <Shuffle
@@ -509,7 +509,7 @@ export function TieBreakerSimulator() {
             onClick={() => applyPreset("lottery")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeTab === "lottery"
-                ? "bg-amber-500 text-slate-950 font-bold"
+                ? "bg-amber-500 text-white font-bold"
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
@@ -521,7 +521,7 @@ export function TieBreakerSimulator() {
             onClick={() => applyPreset("waiting")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeTab === "waiting"
-                ? "bg-sky-500 text-slate-950 font-bold"
+                ? "bg-sky-500 text-white font-bold"
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
@@ -533,7 +533,7 @@ export function TieBreakerSimulator() {
             onClick={() => applyPreset("land")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeTab === "land"
-                ? "bg-emerald-500 text-slate-950 font-bold"
+                ? "bg-emerald-500 text-white font-bold"
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
@@ -545,7 +545,7 @@ export function TieBreakerSimulator() {
             onClick={() => applyPreset("evidence")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeTab === "evidence"
-                ? "bg-purple-500 text-slate-950 font-bold"
+                ? "bg-purple-500 text-white font-bold"
                 : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700"
             }`}
           >
@@ -624,7 +624,7 @@ export function TieBreakerSimulator() {
                 className={
                   farmerA.evidenceVerified
                     ? "text-emerald-400"
-                    : "text-slate-500"
+                    : "text-slate-400"
                 }
               >
                 {farmerA.evidenceVerified
@@ -702,7 +702,7 @@ export function TieBreakerSimulator() {
                 className={
                   farmerB.evidenceVerified
                     ? "text-emerald-400"
-                    : "text-slate-500"
+                    : "text-slate-400"
                 }
               >
                 {farmerB.evidenceVerified
@@ -813,7 +813,7 @@ export function TieBreakerSimulator() {
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
                       s.status === "RESOLVED"
-                        ? "bg-emerald-500 text-slate-950"
+                        ? "bg-emerald-500 text-white"
                         : "bg-slate-800 text-slate-400"
                     }`}
                   >
@@ -855,7 +855,7 @@ export function TieBreakerSimulator() {
 
         <div className="p-8 text-center glass-panel border border-slate-800 text-slate-400 space-y-3">
 
-          <Scale className="w-10 h-10 text-slate-600 mx-auto" />
+          <Scale className="w-10 h-10 text-slate-300 mx-auto" />
 
           <p className="text-sm">
             Select a scenario and run the fairness check to evaluate

@@ -225,7 +225,7 @@ export function PriorityQueue({
                       <span
                         className={`w-7 h-7 rounded-lg flex items-center justify-center font-mono font-extrabold text-xs shadow ${
                           idx === 0
-                            ? "bg-emerald-500 text-slate-950 ring-2 ring-emerald-400/40"
+                            ? "bg-emerald-500 text-white ring-2 ring-emerald-400/40"
                             : idx === 1
                             ? "bg-sky-600 text-white"
                             : idx === 2
@@ -252,7 +252,7 @@ export function PriorityQueue({
                       <div className="text-slate-400 text-[11px] flex items-center gap-2 mt-0.5">
                         <span>{item.landArea} acres ({item.farmerCategory || "Marginal"})</span>
                         <span>•</span>
-                        <span className="font-mono text-slate-500">{item.farmerPhone}</span>
+                        <span className="font-mono text-slate-400">{item.farmerPhone}</span>
                       </div>
                     </div>
                   </td>
@@ -295,7 +295,7 @@ export function PriorityQueue({
                         <span className="text-base font-extrabold font-mono text-white">
                           {item.urgencyScore}
                         </span>
-                        <span className="text-[10px] text-slate-500">/100</span>
+                        <span className="text-[10px] text-slate-400">/100</span>
                       </div>
                       {/* Score Mini Bar */}
                       <div className="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">

@@ -337,7 +337,7 @@ export function PriorityQueue({
                         <button
                           onClick={() => onOpenTieSimulatorWith(filteredQueue[0], item)}
                           title="Simulate tie against #1 farmer"
-                          className="px-2 py-1.5 rounded-lg bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-800/40 text-xs transition-colors hidden lg:inline-flex items-center space-x-1"
+                          className="px-2 py-1.5 rounded-lg bg-amber-900/40 hover:bg-amber-900/60 text-amber-400 hover:text-amber-300 border border-amber-800/60 text-xs transition-colors hidden lg:inline-flex items-center space-x-1"
                         >
                           <Scale className="w-3 h-3" />
                           <span>Tie Test</span>

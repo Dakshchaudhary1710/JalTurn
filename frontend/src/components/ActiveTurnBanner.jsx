@@ -188,7 +188,7 @@ export function ActiveTurnBanner({
 
           <button
             onClick={() => onRaiseDispute(activeTurn)}
-            className="px-3 py-2 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-800/60 text-xs transition-colors flex items-center justify-center space-x-1"
+            className="px-3 py-2 rounded-xl bg-amber-900/40 hover:bg-amber-900/60 text-amber-400 hover:text-amber-300 border border-amber-800/60 text-xs transition-colors flex items-center justify-center space-x-1"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>Dispute</span>

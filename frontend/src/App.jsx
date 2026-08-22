@@ -15,6 +15,7 @@ import { DisputeModal } from "./components/DisputeModal.jsx";
 import { AddBorewellModal } from "./components/AddBorewellModal.jsx";
 import { api } from "./services/api.js";
 import { Droplets, Sparkles, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
+import { Component as SpotlightCursor } from "./components/ui/spotlight-cursor";
 
 export function App() {
   // Navigation
@@ -233,7 +234,7 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-transparent text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
-      
+      <SpotlightCursor />
       {/* Global Background Video */}
       <video
         src="/bg-video.mp4"

@@ -98,7 +98,7 @@ export function Navbar({
                 style={{background:"rgba(255,255,255,0.10)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,255,255,0.20)", color:"#ffffff"}}
               >
                 {waterGroups.map((g) => (
-                  <option key={g.id || g._id} value={g.id || g._id} style={{color:"#ffffff", background:"#f5f0e8"}}>
+                  <option key={g.id || g._id} value={g.id || g._id} style={{color:"#000000", background:"#f5f0e8"}}>
                     {g.name}
                   </option>
                 ))}

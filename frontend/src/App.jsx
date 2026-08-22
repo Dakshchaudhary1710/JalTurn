@@ -353,7 +353,7 @@ export function App() {
 
         {/* TAB 3: Predefined 4-Tier Tie Breaker (Phase 7 Judge Demo) */}
         {activeTab === "tie-demo" && (
-          <TieBreakerSimulator />
+          <TieBreakerSimulator queue={queueData.queue} />
         )}
 
         {/* TAB 4: Public Turn History & Transparent Ledger (Phase 8) */}

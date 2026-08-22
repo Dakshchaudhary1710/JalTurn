@@ -8,8 +8,8 @@ import {
 import confetti from "canvas-confetti";
 import { api } from "../services/api.js";
 
-export function TieBreakerSimulator() {
-  const [farmersList, setFarmersList] = useState([]);
+export function TieBreakerSimulator({ queue = [] }) {
+  const farmersList = queue;
   
   // Configurable Farmer A & Farmer B states
   // Configurable Farmer A & Farmer B states
@@ -39,28 +39,18 @@ export function TieBreakerSimulator() {
   const [resolutionResult, setResolutionResult] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  React.useEffect(() => {
-    async function loadFarmers() {
-      try {
-        const res = await api.getFarmers();
-        if (res.success) setFarmersList(res.farmers);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    loadFarmers();
-  }, []);
+
 
   const handleFarmerChange = (type, farmerId) => {
     const f = farmersList.find(f => f.id === farmerId);
     if (!f) return;
     const targetSet = type === "A" ? setFarmerA : setFarmerB;
     targetSet({
-      name: f.name,
-      crop: f.cropName || f.crop,
+      name: f.farmerName,
+      crop: f.crop || "Unknown",
       stageName: f.stageName || "Initial",
       stageCriticality: f.stageCriticality || 50,
-      waitDays: f.daysSinceLastWater || 0,
+      waitDays: f.waitDays || 0,
       landArea: f.landArea || 1.0,
       evidenceVerified: f.evidenceVerified || false,
       urgencyScore: f.urgencyScore || 50,
@@ -479,7 +469,7 @@ export function TieBreakerSimulator() {
             >
               <option value="">-- Choose from real farmers --</option>
               {farmersList.map(f => (
-                <option key={f.id} value={f.id}>{f.name}</option>
+                <option key={f.id} value={f.id}>{f.farmerName}</option>
               ))}
             </select>
           </div>
@@ -491,7 +481,7 @@ export function TieBreakerSimulator() {
             >
               <option value="">-- Choose from real farmers --</option>
               {farmersList.map(f => (
-                <option key={f.id} value={f.id}>{f.name}</option>
+                <option key={f.id} value={f.id}>{f.farmerName}</option>
               ))}
             </select>
           </div>

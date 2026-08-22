@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: jalturn-backend
+    env: node
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm run start
+    envVars:
+      - key: MONGO_URI
+        sync: false   # You will paste the value manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false   # e.g. https://jal-turn.vercel.app
+      - key: PORT
+        value: 5000
+    healthCheckPath: /

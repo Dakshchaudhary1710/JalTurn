@@ -120,18 +120,11 @@ export function FarmerRegistration({
             <UserPlus className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-0.5 text-xs font-mono font-bold bg-sky-950 text-sky-300 border border-sky-700/60 rounded-full">
-                Phase 1 & 5
-              </span>
-              <span className="text-xs text-slate-400">Village Water User Association (WUA)</span>
-            </div>
+
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
               Farmer & Plot Registration
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
-              Register a member plot to immediately compute FAO-56 crop stage criticality and enter the authoritative queue.
-            </p>
+
           </div>
         </div>
       </div>

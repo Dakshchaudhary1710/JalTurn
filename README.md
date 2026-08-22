@@ -1,16 +1,75 @@
-# React + Vite
+# JalTurn 💧
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**FAO-56 Crop-Urgency Irrigation Engine**
 
-Currently, two official plugins are available:
+JalTurn is a dynamic, data-driven water management platform built for Water User Associations (WUAs). It replaces rigid, conflict-prone time schedules with a dynamic priority queue based on the FAO-56 crop-urgency standard. By ensuring water is distributed equitably based on actual crop needs, JalTurn helps prevent upstream monopolization and ensures tail-enders get their fair share.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 Key Features
 
-## React Compiler
+- **Dynamic Priority Queue**: Automatically ranks farmers for water access based on real-time crop water requirements (FAO-56 guidelines), soil moisture estimates, and historical fairness.
+- **Transparent Ledger**: A public, immutable history of water turns, skipped turns, and logged disputes to build trust within the community.
+- **Fairness Dashboard**: Visual analytics to monitor equitable distribution across different reaches (head, middle, tail) of the canal or borewell.
+- **Tie-Breaker Simulator**: Intelligent multi-tier logic to fairly resolve situations where multiple farmers have the same urgency score.
+- **SMS & IVR Outreach Integration**: Built-in mock services to alert farmers of their upcoming turns via SMS or voice calls (designed for rural accessibility).
+- **Dispute Resolution**: Dedicated workflows for farmers to raise issues (e.g., pump failure, upstream theft) directly on the platform.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Technology Stack
 
-## Expanding the Oxlint configuration
+- **Frontend**: React.js, Vite, Tailwind CSS, Lucide Icons
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (Mongoose ORM)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🚀 Getting Started
+
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v16 or higher recommended)
+- [MongoDB](https://www.mongodb.com/) (Running locally or via MongoDB Atlas)
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/JalTurn.git
+   cd JalTurn
+   ```
+
+2. **Backend Setup:**
+   ```bash
+   cd backend
+   npm install
+   # Create a .env file and configure your environment variables (e.g., MONGO_URI, PORT)
+   npm run start
+   ```
+   *(The backend server will run on `http://localhost:5000` by default.)*
+
+3. **Frontend Setup:**
+   ```bash
+   # Open a new terminal
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   *(The frontend development server will run on `http://localhost:5173`.)*
+
+4. **Open your browser** and navigate to `http://localhost:5173` to view the application.
+
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+*Built with ❤️ for equitable water distribution.*

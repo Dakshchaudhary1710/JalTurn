@@ -33,7 +33,7 @@ router.post("/start", async (req, res) => {
     // Mark water group as ACTIVE
     const targetGroupId = waterGroupId || plot.waterGroupId || "wg-01";
     await WaterGroup.findOneAndUpdate(
-      { $or: [{ id: targetGroupId }, { _id: targetGroupId }] },
+      { id: targetGroupId },
       { activeStatus: "ACTIVE", currentTurnFarmerId: plot.farmerId, currentTurnStartedAt: newTurn.startedAt }
     );
 
@@ -71,13 +71,43 @@ router.post("/complete", async (req, res) => {
 
       const targetGroupId = waterGroupId || turn.waterGroupId || "wg-01";
 
-      // Check if any other turn is in progress
+      // Auto-start next person in queue
       const otherActive = await WaterTurn.findOne({ waterGroupId: targetGroupId, status: "IN_PROGRESS" });
       if (!otherActive) {
-        await WaterGroup.findOneAndUpdate(
-          { $or: [{ id: targetGroupId }, { _id: targetGroupId }] },
-          { activeStatus: "IDLE", currentTurnFarmerId: null, currentTurnStartedAt: null }
-        );
+        const queueData = await computeQueue(targetGroupId);
+        if (queueData.queue && queueData.queue.length > 0) {
+          const nextPlot = queueData.queue[0];
+          const newTurn = await WaterTurn.create({
+            id: "turn-" + Date.now().toString().slice(-6),
+            farmerId: nextPlot.farmerId,
+            farmerName: nextPlot.farmerName,
+            cropName: nextPlot.crop,
+            plotId: nextPlot.plotId,
+            waterGroupId: targetGroupId,
+            score: nextPlot.urgencyScore,
+            rank: 1,
+            startedAt: new Date(),
+            status: "IN_PROGRESS",
+            durationMinutes: Math.round(Math.max(60, Math.min(240, (nextPlot.landArea || 1) * 60)))
+          });
+
+          await WaterGroup.findOneAndUpdate(
+            { id: targetGroupId },
+            { activeStatus: "ACTIVE", currentTurnFarmerId: nextPlot.farmerId, currentTurnStartedAt: newTurn.startedAt }
+          );
+
+          await createAuditLog({
+            action: "TURN_STARTED",
+            waterGroupId: targetGroupId,
+            farmerId: nextPlot.farmerId,
+            message: `Auto-started water turn for ${nextPlot.farmerName} (${nextPlot.crop}) after previous completion.`
+          });
+        } else {
+          await WaterGroup.findOneAndUpdate(
+            { id: targetGroupId },
+            { activeStatus: "IDLE", currentTurnFarmerId: null, currentTurnStartedAt: null }
+          );
+        }
       }
 
       await createAuditLog({
@@ -113,7 +143,7 @@ router.post("/skip", async (req, res) => {
       const otherActive = await WaterTurn.findOne({ waterGroupId: targetGroupId, status: "IN_PROGRESS" });
       if (!otherActive) {
         await WaterGroup.findOneAndUpdate(
-          { $or: [{ id: targetGroupId }, { _id: targetGroupId }] },
+          { id: targetGroupId },
           { activeStatus: "IDLE", currentTurnFarmerId: null, currentTurnStartedAt: null }
         );
       }

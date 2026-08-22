@@ -7,6 +7,7 @@ import { FarmerRegistration } from "./components/FarmerRegistration.jsx";
 import { ExplainabilityModal } from "./components/ExplainabilityModal.jsx";
 import { TieBreakerSimulator } from "./components/TieBreakerSimulator.jsx";
 import { TurnHistory } from "./components/TurnHistory.jsx";
+import { FairnessDashboard } from "./components/FairnessDashboard.jsx";
 
 import { NotificationCenter } from "./components/NotificationCenter.jsx";
 import { SMSMockModal } from "./components/SMSMockModal.jsx";
@@ -323,6 +324,15 @@ export function App() {
             turns={turnHistory}
             logs={logs}
             disputes={disputes}
+          />
+        )}
+
+        {/* TAB 5: Group Fairness Dashboard (Phase 9) */}
+        {activeTab === "fairness" && (
+          <FairnessDashboard
+            fairnessMetrics={queueData.fairnessMetrics}
+            queue={queueData.queue}
+            waterGroup={selectedGroup}
           />
         )}
 

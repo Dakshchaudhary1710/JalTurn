@@ -32,7 +32,7 @@ export function Navbar({
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
+          <nav className="hidden md:flex items-center space-x-1">
           
 
             <button
@@ -87,6 +87,17 @@ export function Navbar({
             </button>
 
 
+            <button
+              onClick={() => setActiveTab("fairness")}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
+                activeTab === "fairness"
+                  ? "bg-slate-800 text-white shadow-sm border border-slate-700"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-teal-400" />
+              <span>Fairness</span>
+            </button>
           </nav>
 
           {/* Right Section: Water Group Selector + Notifications + SMS Mock */}
@@ -160,7 +171,7 @@ export function Navbar({
           <button onClick={() => setActiveTab("register")} className={`px-2.5 py-1.5 rounded ${activeTab === 'register' ? 'bg-slate-800 text-sky-400' : 'text-slate-400'}`}>Register</button>
           <button onClick={() => setActiveTab("tie-demo")} className={`px-2.5 py-1.5 rounded ${activeTab === 'tie-demo' ? 'bg-amber-950 text-amber-300' : 'text-slate-400'}`}>Tie Demo</button>
           <button onClick={() => setActiveTab("history")} className={`px-2.5 py-1.5 rounded ${activeTab === 'history' ? 'bg-slate-800 text-purple-400' : 'text-slate-400'}`}>History</button>
-
+          <button onClick={() => setActiveTab("fairness")} className={`px-2.5 py-1.5 rounded ${activeTab === 'fairness' ? 'bg-slate-800 text-teal-400' : 'text-slate-400'}`}>Fairness</button>
         </div>
 
       </div>

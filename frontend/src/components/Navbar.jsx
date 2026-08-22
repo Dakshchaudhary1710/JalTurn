@@ -9,6 +9,7 @@ import {
   Radio,
   Power,
   Zap,
+  BarChart3,
 } from "lucide-react";
 
 export function Navbar({
@@ -83,11 +84,11 @@ export function Navbar({
               onClick={() => setActiveTab("register")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "register"
-                  ? "bg-sky-900/60 text-sky-300 shadow-sm border border-sky-700/60"
+                  ? "bg-emerald-900/60 text-emerald-300 shadow-sm border border-emerald-700/60"
                   : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
-              <UserPlus className="w-4 h-4 text-sky-400" />
+              <UserPlus className="w-4 h-4 text-emerald-400" />
               <span>Register Farmer</span>
             </button>
 
@@ -101,12 +102,7 @@ export function Navbar({
               }`}
             >
               <Scale className="w-4 h-4 text-amber-400" />
-              <span className="flex items-center">
-                Tie Demo
-                <span className="ml-1 px-1.5 py-0.5 text-[9px] bg-amber-500/20 text-amber-300 rounded font-mono">
-                  4-Tier
-                </span>
-              </span>
+              <span>Tie Demo</span>
             </button>
 
             {/* Turn History */}
@@ -120,6 +116,19 @@ export function Navbar({
             >
               <History className="w-4 h-4 text-purple-400" />
               <span>Turn History</span>
+            </button>
+
+            {/* Fairness */}
+            <button
+              onClick={() => setActiveTab("fairness")}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
+                activeTab === "fairness"
+                  ? "bg-teal-900/50 text-teal-300 shadow-sm border border-teal-700/60"
+                  : "text-white/85 hover:text-white hover:bg-slate-800"
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-teal-400" />
+              <span>Fairness</span>
             </button>
 
           </nav>
@@ -276,10 +285,21 @@ export function Navbar({
             className={`px-2.5 py-1.5 rounded ${
               activeTab === "history"
                 ? "bg-slate-800 text-purple-400"
-                : "text-slate-400"
+                : "text-white/75"
             }`}
           >
             History
+          </button>
+
+          <button
+            onClick={() => setActiveTab("fairness")}
+            className={`px-2.5 py-1.5 rounded ${
+              activeTab === "fairness"
+                ? "bg-slate-800 text-teal-400"
+                : "text-white/75"
+            }`}
+          >
+            Fairness
           </button>
         </div>
 

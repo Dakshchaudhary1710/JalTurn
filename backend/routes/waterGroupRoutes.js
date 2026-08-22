@@ -1,33 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const { waterGroups } = require('../data/seedData');
+const WaterGroup = require('../models/WaterGroup');
 
-router.get("/", (req, res) => {
-  res.json({
-    success: true,
-    waterGroups,
-  });
+router.get("/", async (req, res) => {
+  try {
+    const waterGroups = await WaterGroup.find();
+    res.json({
+      success: true,
+      waterGroups,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
-router.post("/", (req, res) => {
-  const { name, village, sourceType, totalCapacityAcres } = req.body;
-  if (!name || !village || !sourceType) {
-    return res.status(400).json({ success: false, message: "Missing fields" });
+router.post("/", async (req, res) => {
+  try {
+    const { name, village, sourceType, totalCapacityAcres } = req.body;
+    if (!name || !village || !sourceType) {
+      return res.status(400).json({ success: false, message: "Missing fields" });
+    }
+    const newGroup = await WaterGroup.create({
+      id: "wg-" + Date.now().toString().slice(-4),
+      name,
+      village,
+      sourceType,
+      sourceName: name,
+      totalCapacityAcres: Number(totalCapacityAcres) || 10
+    });
+    res.json({ success: true, waterGroup: newGroup });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  const newGroup = {
-    id: "wg-" + Date.now().toString().slice(-4),
-    name,
-    village,
-    sourceType,
-    sourceName: name,
-    totalCapacityAcres: Number(totalCapacityAcres) || 10,
-    activeStatus: "IDLE",
-    currentTurnFarmerId: null,
-    currentTurnStartedAt: null
-  };
-  newGroup._id = newGroup.id;
-  waterGroups.push(newGroup);
-  res.json({ success: true, waterGroup: newGroup });
 });
 
 module.exports = router;

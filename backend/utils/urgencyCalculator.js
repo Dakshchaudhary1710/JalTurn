@@ -1,11 +1,10 @@
-/**
- * Urgency Calculator Utilities
- * FAO-56 based crop stage determination, urgency scoring, and queue computation.
- */
-
 const crypto = require("crypto");
 const CROPS = require("../data/crops");
-const { waterGroups, farmers, plots, waterTurns, auditLogs } = require("../data/seedData");
+const WaterGroup = require('../models/WaterGroup');
+const Farmer = require('../models/Farmer');
+const Plot = require('../models/Plot');
+const WaterTurn = require('../models/WaterTurn');
+const AuditLog = require('../models/AuditLog');
 
 /* =========================================================
    UTILITY FUNCTIONS
@@ -110,17 +109,15 @@ function calculateUrgency({ crop, sowingDate, daysSinceLastWater, landArea }) {
    AUDIT LOG
    ========================================================= */
 
-function createAuditLog({ action, farmerId, message, metadata = {} }) {
-  const log = {
-    id: crypto.randomUUID(),
-    action,
-    farmerId,
+async function createAuditLog({ action, waterGroupId, type, farmerId, message, metadata = {} }) {
+  const log = await AuditLog.create({
+    id: "log-" + Date.now().toString() + "-" + crypto.randomUUID().slice(0, 4),
+    waterGroupId: waterGroupId || "wg-01",
+    type: type || action,
     message,
     metadata,
-    timestamp: new Date().toISOString(),
-  };
-
-  auditLogs.push(log);
+    timestamp: new Date()
+  });
   return log;
 }
 
@@ -128,13 +125,22 @@ function createAuditLog({ action, farmerId, message, metadata = {} }) {
    QUEUE COMPUTATION
    ========================================================= */
 
-function computeQueue(waterGroupId, customWeights = null) {
-  const group = waterGroups.find(g => g.id === waterGroupId) || waterGroups[0];
-  const groupPlots = plots.filter(p => p.waterGroupId === group.id);
+async function computeQueue(waterGroupId, customWeights = null) {
+  let group = await WaterGroup.findOne({ id: waterGroupId });
+  if (!group) {
+    group = await WaterGroup.findOne(); // fallback
+  }
+  if (!group) {
+    return { success: false, message: "No water groups found" };
+  }
+  
+  const groupPlots = await Plot.find({ waterGroupId: group.id });
+  const allFarmers = await Farmer.find({ waterGroupId: group.id });
+  
   const weights = customWeights || { w1_stageCriticality: 0.6, w2_waitingScore: 0.25, w3_smallholderFairness: 0.15 };
 
   const queueItems = groupPlots.map(plot => {
-    const farmer = farmers.find(f => f.id === plot.farmerId) || { name: "Farmer", phone: "+91 98000 00000", category: "Marginal" };
+    const farmer = allFarmers.find(f => f.id === plot.farmerId) || { name: "Farmer", phone: "+91 98000 00000", category: "Marginal" };
 
     const cropConfig = CROPS[plot.crop] || CROPS.wheat;
     const daysSinceSowing = calculateDaysSinceSowing(plot.sowingDate);
@@ -222,7 +228,7 @@ function computeQueue(waterGroupId, customWeights = null) {
     };
   });
 
-  const activeTurn = waterTurns.find(t => t.waterGroupId === group.id && t.status === "IN_PROGRESS");
+  const activeTurn = await WaterTurn.findOne({ waterGroupId: group.id, status: "IN_PROGRESS" });
 
   return {
     success: true,

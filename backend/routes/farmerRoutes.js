@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const CROPS = require('../data/crops');
-const { farmers, plots, auditLogs } = require('../data/seedData');
-const { calculateUrgency } = require('../utils/urgencyCalculator');
+const Farmer = require('../models/Farmer');
+const Plot = require('../models/Plot');
+const { calculateUrgency, createAuditLog } = require('../utils/urgencyCalculator');
 
 router.post("/preview", (req, res) => {
   try {
@@ -19,7 +20,7 @@ router.post("/preview", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { name, phone, waterGroupId, crop, sowingDate, landArea, daysSinceLastWater, evidenceVerified, notes } = req.body;
 
@@ -27,17 +28,16 @@ router.post("/", (req, res) => {
     if (!crop || !CROPS[crop]) return res.status(400).json({ success: false, message: "Valid crop is required." });
     if (!sowingDate) return res.status(400).json({ success: false, message: "Sowing date is required." });
 
-    const newFarmer = {
+    const newFarmer = await Farmer.create({
       id: "farmer-" + Date.now().toString().slice(-4),
       name: name.trim(),
       phone: phone?.trim() || "",
       landholdingSize: Number(landArea || 1.0),
       category: Number(landArea) <= 1.0 ? "Marginal" : "Small",
       waterGroupId: waterGroupId || "wg-01"
-    };
-    farmers.push(newFarmer);
+    });
 
-    const newPlot = {
+    const newPlot = await Plot.create({
       id: "plot-" + Date.now().toString().slice(-4),
       farmerId: newFarmer.id,
       crop,
@@ -46,15 +46,13 @@ router.post("/", (req, res) => {
       daysSinceLastWater: Number(daysSinceLastWater || 5),
       waterGroupId: newFarmer.waterGroupId,
       evidenceVerified: Boolean(evidenceVerified)
-    };
-    plots.push(newPlot);
+    });
 
-    auditLogs.unshift({
-      id: "log-" + Date.now(),
+    await createAuditLog({
+      action: "FARMER_REGISTERED",
       waterGroupId: newFarmer.waterGroupId,
-      type: "FARMER_REGISTERED",
-      message: `New farmer ${newFarmer.name} (${newFarmer.landholdingSize} acres) registered.`,
-      timestamp: new Date().toISOString()
+      farmerId: newFarmer.id,
+      message: `New farmer ${newFarmer.name} (${newFarmer.landholdingSize} acres) registered.`
     });
 
     res.status(201).json({ success: true, message: "Farmer registered successfully.", farmer: newFarmer, plot: newPlot });
@@ -64,21 +62,27 @@ router.post("/", (req, res) => {
   }
 });
 
-router.get("/", (req, res) => {
-  const { waterGroupId } = req.query;
-  let result = farmers;
-  if (waterGroupId) {
-    result = farmers.filter(farmer => farmer.waterGroupId === waterGroupId);
+router.get("/", async (req, res) => {
+  try {
+    const { waterGroupId } = req.query;
+    const filter = waterGroupId ? { waterGroupId } : {};
+    const farmers = await Farmer.find(filter);
+    res.json({ success: true, count: farmers.length, farmers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  res.json({ success: true, count: result.length, farmers: result });
 });
 
-router.get("/:id", (req, res) => {
-  const farmer = farmers.find(f => f.id === req.params.id);
-  if (!farmer) {
-    return res.status(404).json({ success: false, message: "Farmer not found." });
+router.get("/:id", async (req, res) => {
+  try {
+    const farmer = await Farmer.findOne({ id: req.params.id });
+    if (!farmer) {
+      return res.status(404).json({ success: false, message: "Farmer not found." });
+    }
+    res.json({ success: true, farmer });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  res.json({ success: true, farmer });
 });
 
 module.exports = router;

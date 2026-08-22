@@ -1,69 +1,104 @@
 const express = require('express');
 const router = express.Router();
-const { waterTurns, auditLogs, plots } = require('../data/seedData');
-const { computeQueue } = require('../utils/urgencyCalculator');
+const WaterTurn = require('../models/WaterTurn');
+const Plot = require('../models/Plot');
+const { computeQueue, createAuditLog } = require('../utils/urgencyCalculator');
 
-router.post("/start", (req, res) => {
-  const { waterGroupId, plotId } = req.body;
-  const queueData = computeQueue(waterGroupId);
-  const plot = queueData.queue.find(q => q.plotId === plotId) || queueData.queue[0];
-  const newTurn = {
-    id: "turn-" + Date.now().toString().slice(-6),
-    farmerId: plot.farmerId,
-    farmerName: plot.farmerName,
-    cropName: plot.crop,
-    plotId: plot.plotId,
-    waterGroupId,
-    score: plot.urgencyScore,
-    rank: 1,
-    startedAt: new Date().toISOString(),
-    status: "IN_PROGRESS",
-    durationMinutes: 120,
-    createdAt: new Date().toISOString()
-  };
-  waterTurns.unshift(newTurn);
-  auditLogs.unshift({
-    id: "log-" + Date.now(),
-    waterGroupId,
-    type: "TURN_STARTED",
-    message: `Water turn started for ${plot.farmerName} (${plot.crop}).`,
-    timestamp: new Date().toISOString()
-  });
-  res.json({ success: true, turn: newTurn });
-});
-
-router.post("/complete", (req, res) => {
-  const { waterGroupId, turnId } = req.body;
-  const turn = waterTurns.find(t => t.status === "IN_PROGRESS") || waterTurns[0];
-  if (turn) {
-    turn.status = "COMPLETED";
-    turn.completedAt = new Date().toISOString();
-    const p = plots.find(pl => pl.id === turn.plotId);
-    if (p) p.daysSinceLastWater = 0;
-
-    auditLogs.unshift({
-      id: "log-" + Date.now(),
+router.post("/start", async (req, res) => {
+  try {
+    const { waterGroupId, plotId } = req.body;
+    const queueData = await computeQueue(waterGroupId);
+    const plot = queueData.queue.find(q => q.plotId === plotId) || queueData.queue[0];
+    
+    const newTurn = await WaterTurn.create({
+      id: "turn-" + Date.now().toString().slice(-6),
+      farmerId: plot.farmerId,
+      farmerName: plot.farmerName,
+      cropName: plot.crop,
+      plotId: plot.plotId,
       waterGroupId,
-      type: "TURN_COMPLETED",
-      message: `Water turn completed for ${turn.farmerName}. Plot moisture replenished; queue recalculated.`,
-      timestamp: new Date().toISOString()
+      score: plot.urgencyScore,
+      rank: 1,
+      startedAt: new Date(),
+      status: "IN_PROGRESS",
+      durationMinutes: 120
     });
+
+    await createAuditLog({
+      action: "TURN_STARTED",
+      waterGroupId,
+      farmerId: plot.farmerId,
+      message: `Water turn started for ${plot.farmerName} (${plot.crop}).`
+    });
+
+    res.json({ success: true, turn: newTurn });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  res.json({ success: true, turn });
 });
 
-router.post("/skip", (req, res) => {
-  const { waterGroupId, turnId, reason } = req.body;
-  const turn = waterTurns.find(t => t.status === "IN_PROGRESS");
-  if (turn) {
-    turn.status = "SKIPPED";
-    turn.tieBreakReason = `Skipped: ${reason || 'Operator override'}`;
+router.post("/complete", async (req, res) => {
+  try {
+    const { waterGroupId, turnId } = req.body;
+    
+    // Attempt to find the specific turn, or fallback to the first active turn
+    let turn;
+    if (turnId) {
+      turn = await WaterTurn.findOne({ id: turnId });
+    } else {
+      turn = await WaterTurn.findOne({ status: "IN_PROGRESS" });
+    }
+    
+    if (turn) {
+      turn.status = "COMPLETED";
+      turn.completedAt = new Date();
+      await turn.save();
+
+      // Reset daysSinceLastWater for the plot
+      await Plot.findOneAndUpdate({ id: turn.plotId }, { daysSinceLastWater: 0, lastWateredAt: new Date() });
+
+      await createAuditLog({
+        action: "TURN_COMPLETED",
+        waterGroupId,
+        farmerId: turn.farmerId,
+        message: `Water turn completed for ${turn.farmerName}. Plot moisture replenished; queue recalculated.`
+      });
+    }
+    res.json({ success: true, turn });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-  res.json({ success: true, turn });
 });
 
-router.get("/history/:waterGroupId", (req, res) => {
-  res.json({ success: true, turns: waterTurns.filter(t => t.waterGroupId === req.params.waterGroupId) });
+router.post("/skip", async (req, res) => {
+  try {
+    const { waterGroupId, turnId, reason } = req.body;
+    
+    let turn;
+    if (turnId) {
+      turn = await WaterTurn.findOne({ id: turnId });
+    } else {
+      turn = await WaterTurn.findOne({ status: "IN_PROGRESS" });
+    }
+
+    if (turn) {
+      turn.status = "SKIPPED";
+      turn.tieBreakReason = `Skipped: ${reason || 'Operator override'}`;
+      await turn.save();
+    }
+    res.json({ success: true, turn });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get("/history/:waterGroupId", async (req, res) => {
+  try {
+    const turns = await WaterTurn.find({ waterGroupId: req.params.waterGroupId }).sort({ createdAt: -1 });
+    res.json({ success: true, turns });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 module.exports = router;

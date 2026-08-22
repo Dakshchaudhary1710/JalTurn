@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const seedDatabase = require("./config/seeder");
 
 const waterGroupRoutes = require("./routes/waterGroupRoutes");
 const farmerRoutes = require("./routes/farmerRoutes");
@@ -16,7 +17,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-connectDB();
+// Connect to DB and seed initial data if empty
+connectDB().then(() => {
+  seedDatabase();
+});
 
 app.get("/", (req, res) => {
   res.json({

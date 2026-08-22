@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CROPS = require('../data/crops');
-const { auditLogs } = require('../data/seedData');
+const AuditLog = require('../models/AuditLog');
 
 router.get("/health", (req, res) => {
   res.json({
@@ -18,16 +18,26 @@ router.get("/crops", (req, res) => {
   });
 });
 
-router.get("/logs/:waterGroupId", (req, res) => {
-  res.json({ success: true, logs: auditLogs.filter(l => l.waterGroupId === req.params.waterGroupId) });
+router.get("/logs/:waterGroupId", async (req, res) => {
+  try {
+    const logs = await AuditLog.find({ waterGroupId: req.params.waterGroupId }).sort({ timestamp: -1 });
+    res.json({ success: true, logs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
-router.get("/audit", (req, res) => {
-  res.json({
-    success: true,
-    count: auditLogs.length,
-    logs: [...auditLogs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)),
-  });
+router.get("/audit", async (req, res) => {
+  try {
+    const logs = await AuditLog.find().sort({ timestamp: -1 });
+    res.json({
+      success: true,
+      count: logs.length,
+      logs
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 module.exports = router;

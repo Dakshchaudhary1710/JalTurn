@@ -1,4 +1,4 @@
- {
+{
   "name": "jalturn-backend",
   "version": "1.0.0",
   "description": "Jalturn API Backend",
@@ -9,8 +9,9 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "mongoose": "^9.9.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

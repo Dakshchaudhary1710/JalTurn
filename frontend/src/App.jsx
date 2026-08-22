@@ -200,9 +200,12 @@ export function App() {
         showToast(`Farmer ${formData.name} registered successfully!`);
         await loadQueueData();
         setActiveTab("dashboard");
+      } else {
+        throw new Error(res.message || "Failed to register");
       }
     } catch (err) {
       showToast("Error registering farmer: " + err.message, "error");
+      throw err;
     }
   };
 

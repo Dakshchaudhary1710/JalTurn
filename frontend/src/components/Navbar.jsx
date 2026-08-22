@@ -172,7 +172,7 @@ export function Navbar({
             <button
               onClick={onOpenAddBorewell}
               title="Add New Village Borewell"
-              className="p-2 rounded-lg bg-emerald-900/40 text-emerald-400 hover:bg-emerald-800/60 hover:text-emerald-300 border border-emerald-800/50 transition-colors flex items-center"
+              className="p-2 rounded-lg bg-transparent text-emerald-400 hover:bg-slate-800/60 hover:text-emerald-300 border border-emerald-800/50 transition-colors flex items-center"
             >
               <UserPlus className="w-4 h-4" />
             </button>

@@ -479,7 +479,7 @@ export function TieBreakerSimulator() {
             >
               <option value="">-- Choose from real farmers --</option>
               {farmersList.map(f => (
-                <option key={f.id} value={f.id}>{f.name} ({f.cropName})</option>
+                <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </select>
           </div>
@@ -491,7 +491,7 @@ export function TieBreakerSimulator() {
             >
               <option value="">-- Choose from real farmers --</option>
               {farmersList.map(f => (
-                <option key={f.id} value={f.id}>{f.name} ({f.cropName})</option>
+                <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </select>
           </div>

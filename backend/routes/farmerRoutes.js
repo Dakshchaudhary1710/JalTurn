@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const express = require('express');
 const router = express.Router();
 const CROPS = require('../data/crops');
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
     if (!sowingDate) return res.status(400).json({ success: false, message: "Sowing date is required." });
 
     const newFarmer = await Farmer.create({
-      id: "farmer-" + Date.now().toString().slice(-4),
+      id: "farmer-" + crypto.randomUUID(),
       name: name.trim(),
       phone: phone?.trim() || "",
       landholdingSize: Number(landArea || 1.0),
@@ -38,7 +39,7 @@ router.post("/", async (req, res) => {
     });
 
     const newPlot = await Plot.create({
-      id: "plot-" + Date.now().toString().slice(-4),
+      id: "plot-" + crypto.randomUUID(),
       farmerId: newFarmer.id,
       crop,
       sowingDate,

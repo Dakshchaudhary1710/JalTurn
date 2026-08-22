@@ -3,7 +3,10 @@
  * Connects directly to Express REST Backend at localhost:5000
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+let API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+if (API_BASE && !API_BASE.endsWith('/api') && API_BASE !== "http://localhost:5000/api") {
+  API_BASE = API_BASE.replace(/\/$/, '') + '/api';
+}
 
 // Fetch helper
 async function apiRequest(endpoint, options = {}) {

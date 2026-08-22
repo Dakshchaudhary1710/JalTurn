@@ -194,20 +194,20 @@ export function LandingPage({
               <div key={i} className="p-4 rounded-2xl space-y-2" style={{background:"rgba(245,240,230,0.7)", border:"1px solid rgba(200,186,162,0.5)"}}>
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-bold flex items-center gap-1" style={{color:s.color}}>{s.icon}{s.label}</span>
-                  <span className="font-mono font-bold" style={{color:"#ffffff"}}>{s.val}{s.unit}</span>
+                  <span className="font-mono font-bold" style={{color:"#1e293b"}}>{s.val}{s.unit}</span>
                 </div>
                 <input type="range" min={s.min} max={s.max} step={s.step} value={s.val}
                   onChange={(e) => s.set(Number(e.target.value))}
                   className="w-full cursor-pointer" style={{accentColor:s.accent}} />
-                <div className="flex justify-between text-[10px]" style={{color:"#94a3b8"}}>
-                  <span>{s.left}</span>{s.mid && <span style={{color:s.accent, fontWeight:500}}>{s.mid}</span>}<span>{s.right}</span>
+                <div className="flex justify-between text-[10px]" style={{color:"#475569"}}>
+                  <span>{s.left}</span>{s.mid && <span style={{color:s.accent, fontWeight:700}}>{s.mid}</span>}<span>{s.right}</span>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="p-4 rounded-xl text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-2" style={{background:"rgba(245,240,230,0.7)", border:"1px solid rgba(200,186,162,0.5)"}}>
-            <span style={{color:"#94a3b8"}}>Formula: (0.60 × {calcStage}) + (0.25 × {waitingScore}) + (0.15 × {smallholderScore})</span>
+            <span style={{color:"#475569", fontWeight:600}}>Formula: (0.60 × {calcStage}) + (0.25 × {waitingScore}) + (0.15 × {smallholderScore})</span>
             <span className="font-bold" style={{color:"#5E8C76"}}>Score = {urgencyScore} / 100</span>
           </div>
         </div>

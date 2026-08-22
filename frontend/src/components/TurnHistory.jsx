@@ -128,7 +128,7 @@ export function TurnHistory({
             return (
               <div key={item.id + idx} className="relative group">
                 {/* Timeline Icon Node */}
-                <div className={`absolute -left-[35px] sm:-left-[43px] top-1 w-8 h-8 rounded-full border flex items-center justify-center ${iconColor} shadow-md`}>
+                <div className={`absolute -left-10 sm:-left-12 top-1 w-8 h-8 rounded-full border flex items-center justify-center ${iconColor} shadow-md`}>
                   <IconComponent className="w-4 h-4" />
                 </div>
 

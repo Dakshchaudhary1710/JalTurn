@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
 const CROPS = require('../data/crops');
 const Farmer = require('../models/Farmer');
 const Plot = require('../models/Plot');
@@ -29,34 +28,24 @@ router.post("/", async (req, res) => {
     if (!crop || !CROPS[crop]) return res.status(400).json({ success: false, message: "Valid crop is required." });
     if (!sowingDate) return res.status(400).json({ success: false, message: "Sowing date is required." });
 
-    const farmerId = "farmer-" + crypto.randomUUID().slice(0, 8);
-    const plotId   = "plot-"   + crypto.randomUUID().slice(0, 8);
-    const groupId  = waterGroupId || "wg-01";
-    const acreSize = Math.max(0.1, Number(landArea) || 1.0);
-    const category = acreSize <= 1.0 ? "Marginal" : acreSize <= 2.0 ? "Small" : acreSize <= 5.0 ? "Medium" : "Large";
-
     const newFarmer = await Farmer.create({
-      id: farmerId,
+      id: "farmer-" + Date.now().toString().slice(-4),
       name: name.trim(),
       phone: phone?.trim() || "",
-      landholdingSize: acreSize,
-      category,
-      waterGroupId: groupId,
-      isActive: true,
-      isVerified: false
+      landholdingSize: Number(landArea || 1.0),
+      category: Number(landArea) <= 1.0 ? "Marginal" : "Small",
+      waterGroupId: waterGroupId || "wg-01"
     });
 
     const newPlot = await Plot.create({
-      id: plotId,
-      farmerId: farmerId,
+      id: "plot-" + Date.now().toString().slice(-4),
+      farmerId: newFarmer.id,
       crop,
       sowingDate,
-      landArea: acreSize,
+      landArea: newFarmer.landholdingSize,
       daysSinceLastWater: Number(daysSinceLastWater || 5),
-      waterGroupId: groupId,
-      evidenceVerified: Boolean(evidenceVerified),
-      notes: notes || "",
-      isActive: true
+      waterGroupId: newFarmer.waterGroupId,
+      evidenceVerified: Boolean(evidenceVerified)
     });
 
     await createAuditLog({

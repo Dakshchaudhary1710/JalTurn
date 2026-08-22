@@ -70,8 +70,8 @@ export function Navbar({
               onClick={() => setActiveTab("dashboard")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "dashboard"
-                  ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                  ? "bg-emerald-900/60 text-emerald-300 shadow-sm border border-emerald-700/60"
+                  : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
               <Sprout className="w-4 h-4 text-teal-400" />
@@ -83,8 +83,8 @@ export function Navbar({
               onClick={() => setActiveTab("register")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "register"
-                  ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                  ? "bg-sky-900/60 text-sky-300 shadow-sm border border-sky-700/60"
+                  : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
               <UserPlus className="w-4 h-4 text-sky-400" />
@@ -97,13 +97,13 @@ export function Navbar({
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "tie-demo"
                   ? "bg-amber-950/60 text-amber-300 border border-amber-800/80 shadow-sm"
-                  : "text-amber-400/80 hover:text-amber-300 hover:bg-slate-900"
+                  : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
               <Scale className="w-4 h-4 text-amber-400" />
               <span className="flex items-center">
                 Tie Demo
-                <span className="ml-1 px-1.5 py-0.2 text-[9px] bg-amber-500/20 text-amber-300 rounded font-mono">
+                <span className="ml-1 px-1.5 py-0.5 text-[9px] bg-amber-500/20 text-amber-300 rounded font-mono">
                   4-Tier
                 </span>
               </span>
@@ -114,8 +114,8 @@ export function Navbar({
               onClick={() => setActiveTab("history")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "history"
-                  ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                  ? "bg-purple-900/50 text-purple-300 shadow-sm border border-purple-700/60"
+                  : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
               <History className="w-4 h-4 text-purple-400" />

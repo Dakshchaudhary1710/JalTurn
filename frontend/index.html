@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Preload background video to eliminate load delay -->
+    <link rel="preload" href="/bg-video.mp4" as="video" type="video/mp4" />
     <title>JalTurn — Fair & Explainable Shared Irrigation Queue</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,7 +83,7 @@
       }
     </script>
   </head>
-  <body class="bg-[#EDE6D8] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-slate-950">
+    <body class="bg-[#1a1a1a] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-slate-950" style="background:#1c1f1c">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

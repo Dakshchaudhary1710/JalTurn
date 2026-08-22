@@ -235,7 +235,7 @@ export function App() {
   return (
     <div className="min-h-screen bg-transparent text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
       <SpotlightCursor />
-      {/* Global Background Video */}
+      {/* Global Background Video — preloaded for 0ms delay */}
       <video
         src="/bg-video.mp4"
         className="fixed inset-0 w-full h-full object-cover pointer-events-none"
@@ -244,6 +244,7 @@ export function App() {
         playsInline
         autoPlay
         loop
+        preload="auto"
         disablePictureInPicture
         controlsList="nodownload nofullscreen noremoteplayback"
       />

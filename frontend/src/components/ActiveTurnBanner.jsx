@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Droplet, Clock, CheckCircle2, AlertTriangle, FastForward, UserCheck, Waves } from "lucide-react";
+import { Droplet, Clock, CheckCircle2, AlertTriangle, FastForward, UserCheck, Waves, Power } from "lucide-react";
 
 export function ActiveTurnBanner({
   activeTurn,
@@ -7,7 +7,8 @@ export function ActiveTurnBanner({
   nextFarmer,
   onCompleteTurn,
   onSkipTurn,
-  onRaiseDispute
+  onRaiseDispute,
+  onTogglePumpStatus
 }) {
   const [elapsedMinutes, setElapsedMinutes] = useState(45);
 
@@ -26,23 +27,34 @@ export function ActiveTurnBanner({
   const remainingMins = Math.max(0, totalDuration - elapsedMinutes);
   const progressPct = Math.min(100, Math.round((elapsedMinutes / totalDuration) * 100));
 
+  const isPumpActive = activeTurn || String(waterGroup?.activeStatus).toUpperCase() === "ACTIVE";
+
   if (!activeTurn) {
     return (
       <div className="glass-panel p-6 border border-slate-800 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
+            <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center ${
+              isPumpActive
+                ? "bg-emerald-950/80 border-emerald-500/50 text-emerald-400 animate-pulse"
+                : "bg-slate-800 border-slate-700 text-slate-400"
+            }`}>
               <Droplet className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Source Status</span>
-                <span className="px-2 py-0.5 text-[10px] font-mono bg-slate-800 text-slate-300 rounded-full border border-slate-700">
-                  IDLE / STANDBY
+                <span className={`px-2.5 py-0.5 text-[10px] font-mono rounded-full border flex items-center gap-1 font-bold ${
+                  isPumpActive
+                    ? "bg-emerald-950 text-emerald-300 border-emerald-500/50"
+                    : "bg-slate-800 text-slate-400 border-slate-700"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isPumpActive ? "bg-emerald-400 animate-ping" : "bg-amber-400"}`} />
+                  {isPumpActive ? "PUMP ACTIVE (READY FOR TURN)" : "STANDBY / OFF"}
                 </span>
               </div>
               <h3 className="text-lg font-bold text-white mt-0.5">
-                {waterGroup?.sourceName || "Village Borewell #04"}
+                {waterGroup?.name || waterGroup?.sourceName || "Village Borewell #04"}
               </h3>
               <p className="text-xs text-slate-400">
                 Next scheduled turn: <strong className="text-emerald-400">{nextFarmer?.farmerName || "Queue Ready"}</strong>
@@ -50,15 +62,30 @@ export function ActiveTurnBanner({
             </div>
           </div>
 
-          {nextFarmer && (
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            {/* Toggle Pump Power Button */}
             <button
-              onClick={() => onCompleteTurn(null, nextFarmer.plotId)}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center space-x-2"
+              onClick={() => onTogglePumpStatus && onTogglePumpStatus(waterGroup?.id || waterGroup?._id)}
+              className={`px-4 py-2.5 rounded-xl font-semibold text-xs transition-all flex items-center justify-center space-x-2 border shadow-md ${
+                isPumpActive
+                  ? "bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-700/60"
+                  : "bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-700/60"
+              }`}
             >
-              <Droplet className="w-4 h-4" />
-              <span>Start Turn for {nextFarmer.farmerName.split(" ")[0]}</span>
+              <Power className="w-4 h-4" />
+              <span>{isPumpActive ? "Switch to Standby" : "Power On Pump"}</span>
             </button>
-          )}
+
+            {nextFarmer && (
+              <button
+                onClick={() => onCompleteTurn(null, nextFarmer.plotId)}
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center space-x-2"
+              >
+                <Droplet className="w-4 h-4" />
+                <span>Start Turn for {nextFarmer.farmerName.split(" ")[0]}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -133,6 +160,16 @@ export function ActiveTurnBanner({
 
         {/* Right: Quick Action Buttons */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+          {/* Pump Power Button */}
+          <button
+            onClick={() => onTogglePumpStatus && onTogglePumpStatus(waterGroup?.id || waterGroup?._id)}
+            title="Toggle Pump Active Status"
+            className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700 text-xs transition-colors flex items-center justify-center space-x-1"
+          >
+            <Power className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Pump</span>
+          </button>
+
           <button
             onClick={() => onCompleteTurn(activeTurn.id || activeTurn._id)}
             className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-950/40"

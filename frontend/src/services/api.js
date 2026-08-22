@@ -39,6 +39,13 @@ export const api = {
     });
   },
 
+  togglePumpStatus: async (waterGroupId, status = null) => {
+    return await apiRequest(`/water-groups/${waterGroupId}/toggle-status`, {
+      method: "POST",
+      body: JSON.stringify({ status })
+    });
+  },
+
   // Authoritative Queue
   getQueue: async (waterGroupId = "wg-01") => {
     return await apiRequest(`/queue/${waterGroupId}`);

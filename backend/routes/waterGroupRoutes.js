@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
 // GET single water group by id
 router.get("/:id", async (req, res) => {
   try {
-    const wg = await WaterGroup.findOne({ id: req.params.id });
+    const wg = await WaterGroup.findOne({ $or: [{ id: req.params.id }, { _id: req.params.id }] });
     if (!wg) return res.status(404).json({ success: false, message: "Water group not found." });
     res.json({ success: true, waterGroup: wg });
   } catch (error) {
@@ -53,15 +53,16 @@ router.post("/", async (req, res) => {
       sourceType,
       sourceName: sourceName || name,
       borewellDepthFeet: borewellDepthFeet ? Number(borewellDepthFeet) : null,
-      motorHorsePower:   motorHorsePower   ? Number(motorHorsePower)   : null,
-      flowRateLPH:       flowRateLPH       ? Number(flowRateLPH)       : null,
+      motorHorsePower: motorHorsePower ? Number(motorHorsePower) : null,
+      flowRateLPH: flowRateLPH ? Number(flowRateLPH) : null,
       totalCapacityAcres: Number(totalCapacityAcres) || 10,
       scheduleStartTime: scheduleStartTime || "06:00",
-      scheduleEndTime:   scheduleEndTime   || "18:00",
-      operationalDays:   operationalDays   || ["Mon","Tue","Wed","Thu","Fri","Sat"],
-      operatorName:  operatorName  || "",
+      scheduleEndTime: scheduleEndTime || "18:00",
+      operationalDays: operationalDays || ["Mon","Tue","Wed","Thu","Fri","Sat"],
+      operatorName: operatorName || "",
       operatorPhone: operatorPhone || "",
-      licenseNumber: licenseNumber || ""
+      licenseNumber: licenseNumber || "",
+      activeStatus: "IDLE"
     });
 
     await createAuditLog({
@@ -88,7 +89,7 @@ router.patch("/:id", async (req, res) => {
     const update = {};
     allowed.forEach(k => { if (req.body[k] !== undefined) update[k] = req.body[k]; });
 
-    const wg = await WaterGroup.findOneAndUpdate({ id: req.params.id }, update, { new: true });
+    const wg = await WaterGroup.findOneAndUpdate({ $or: [{ id: req.params.id }, { _id: req.params.id }] }, update, { new: true });
     if (!wg) return res.status(404).json({ success: false, message: "Water group not found." });
 
     await createAuditLog({
@@ -98,6 +99,37 @@ router.patch("/:id", async (req, res) => {
     });
 
     res.json({ success: true, waterGroup: wg });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST — toggle active pump status
+router.post("/:id/toggle-status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    let group = await WaterGroup.findOne({ id }) || await WaterGroup.findOne({ _id: id });
+    if (!group) {
+      return res.status(404).json({ success: false, message: "Water group / pump not found." });
+    }
+
+    const nextStatus = status || (group.activeStatus === "ACTIVE" ? "STANDBY" : "ACTIVE");
+    group.activeStatus = nextStatus;
+    await group.save();
+
+    await createAuditLog({
+      action: "PUMP_STATUS_TOGGLED",
+      waterGroupId: group.id,
+      message: `Pump status for "${group.name}" changed to ${nextStatus}.`
+    });
+
+    res.json({
+      success: true,
+      waterGroup: group,
+      message: `Pump status updated to ${nextStatus}`
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

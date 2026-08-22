@@ -141,6 +141,20 @@ export function App() {
     }
   };
 
+  const handleTogglePumpStatus = async (groupIdToToggle) => {
+    const targetId = groupIdToToggle || selectedGroupId;
+    try {
+      const res = await api.togglePumpStatus(targetId);
+      if (res.success) {
+        const newStatus = res.waterGroup.activeStatus;
+        showToast(`Pump status updated to ${newStatus}!`);
+        await Promise.all([loadGroups(), loadQueueData()]);
+      }
+    } catch (err) {
+      showToast("Error updating pump status: " + err.message, "error");
+    }
+  };
+
   const handleRecalculate = async (customWeights) => {
     try {
       setIsRefreshing(true);
@@ -282,6 +296,7 @@ export function App() {
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenSMSMock={() => setIsSMSOpen(true)}
         onOpenAddBorewell={() => setIsAddBorewellOpen(true)}
+        onTogglePumpStatus={handleTogglePumpStatus}
       />
 
       {/* Main Container */}
@@ -309,6 +324,7 @@ export function App() {
               onCompleteTurn={handleCompleteTurn}
               onSkipTurn={handleSkipTurn}
               onRaiseDispute={handleRaiseDispute}
+              onTogglePumpStatus={handleTogglePumpStatus}
             />
 
             {/* Authoritative Dynamic Priority Queue */}

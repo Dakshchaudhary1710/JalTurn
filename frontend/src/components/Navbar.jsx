@@ -71,7 +71,7 @@ export function Navbar({
               onClick={() => setActiveTab("dashboard")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "dashboard"
-                  ? "bg-emerald-900/60 text-emerald-300 shadow-sm border border-emerald-700/60"
+                  ? "bg-emerald-900/80 text-emerald-400 shadow-sm border border-emerald-700/60"
                   : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
@@ -84,7 +84,7 @@ export function Navbar({
               onClick={() => setActiveTab("register")}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1.5 ${
                 activeTab === "register"
-                  ? "bg-emerald-900/60 text-emerald-300 shadow-sm border border-emerald-700/60"
+                  ? "bg-emerald-900/80 text-emerald-400 shadow-sm border border-emerald-700/60"
                   : "text-white/85 hover:text-white hover:bg-slate-800"
               }`}
             >
